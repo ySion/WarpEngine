@@ -1,0 +1,148 @@
+#include "other.wh"
+
+import iostream
+
+
+fn main() {
+	std::printf("hello world\n");
+}
+
+fn add1(a, b, c) -> int8 { require a, b, c is int8
+	return a + b + c;
+}
+
+fn add2(a, b, c) -> int16 { require a, b, c is (int8, int16)
+	return a + b + c;
+}
+
+fn add3(a, b, c) -> int32 { require a, b, c is (int8, int16, int32)
+	return a + b + c;
+}
+
+fn add4(a, b, c) -> int64 { require a, b, c is (int8, int16, int32, int64)
+	return a + b + c;
+}
+
+fn get_list_num(){
+	return {1,2,3,4,5,6};
+}
+
+fn get_dynamic(a : int32) -> int32[]{
+	return {0..a};
+
+	//equal =
+	//var _temp_generator_1 : int32;
+	//var begin_generator_1_itor_begin : int32 = 0
+	//var begin_generator_1_itor_end : int32 = 0
+	//var begin_generator_1_itor_itor : int32 = 0
+	//for begin_generator_1_itor_itor = begin_generator_1_itor_begin; begin_generator_1_itor_itor != begin_generator_1_itor_end; begin_generator_1_itor_itor.next() {
+	//
+}
+
+
+struct<T> example {
+shared:
+	count : int32 = 0,
+	data : uptr<T> = nullptr
+}
+
+imp<T> example {
+
+	example(item : T, count : int32 = 0) {
+		data = malloc(count * sizeof(T)); 
+		this.count  = count;
+		for T : 0..count {
+			data[T] = item;
+		}
+
+		for i, p : data[0..count] {
+			p = item
+		}
+	}
+
+	push_back(item : T) {
+		data[count] = item;
+		count++;
+	}
+
+	erase(index : int32) {
+		for i, data[index..count] = data[index + 1..count];
+
+		/*
+
+		var itor = index.itor(); //ͷ
+		var itor2 = index.itor(); //ͷ
+
+		loop {
+			if itor.next != count {
+					
+			}
+		}
+
+		for i = index.get_itor(); i != count.get_itor(); rebind(i, i.itor_next()) {
+			data[i] = data[i + 1];
+		}
+		*/
+		var _temp_generator_1_current : int = _temp_generator_1_start;
+
+
+		*/
+
+		count--;
+	}
+
+}
+
+imp itor<int> {
+	itor_next() -> T {
+		return current++;
+	}
+}
+
+
+
+
+
+
+imp<T> itor for int{
+	itor_get() -> int{
+		return itor(current);
+	}
+	
+	itor_next() -> int {
+		return 
+	}
+}
+
+
+
+
+
+imp custom_ops for example {
+	
+	generator begin(){
+
+	}
+
+	generator end(){
+	
+	}
+
+	generator next(){
+		
+	}
+}
+
+
+
+fn add5(a, b, c) -> float { //require a, b, c is float
+	return a + b + c;
+}
+
+
+
+fn add6<T>(a: T, b : T, c : T) -> T 
+	require T : (Addable, Printable, Subable),
+{
+	return a + b + c;
+}

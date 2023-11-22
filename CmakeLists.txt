@@ -1,0 +1,90 @@
+cmake_minimum_required(VERSION 3.25)
+set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+
+set(CMAKE_CXX_STANDARD 23)
+
+set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
+set(VCPKG_TARGET_TRIPLET x64-windows-release)
+set(EXT_PATH "${CMAKE_SOURCE_DIR}/Ext")
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+
+project(WarpEngine)
+
+if(WIN32)
+    add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/source-charset:utf-8>")
+    add_compile_options("$<$<C_COMPILER_ID:MSVC>:/source-charset:utf-8>")
+endif()
+
+set(mmg_INCLUDE_DIR "${EXT_PATH}/mmg/include" "${EXT_PATH}/mmg/include/mmg")
+set(mmg_LIB_DIR "${EXT_PATH}/mmg/lib")
+set(mmg_LIBS "${mmg_LIB_DIR}/mmgs.lib" "${mmg_LIB_DIR}/mmg2d.lib" "${mmg_LIB_DIR}/mmg3d.lib" "${mmg_LIB_DIR}/mmg.lib")
+
+set(iwasm_INCLUDE_DIR "${EXT_PATH}/iwasm/include" "${EXT_PATH}/iwasm/include/iwasm")
+set(iwasm_LIB_DIR "${EXT_PATH}/iwasm/lib")
+set(iwasm_LIBS "${iwasm_LIB_DIR}/libiwasm.lib" "${iwasm_LIB_DIR}/vmlib.lib")
+
+set(LLVM_DIR "C:/llvm/lib/cmake/llvm")
+set(MLIR_DIR "C:/llvm/lib/cmake/mlir")
+
+
+set(clipper2_INCLUDE_DIR "${EXT_PATH}/clipper2/include" "${EXT_PATH}/clipper2/include/clipper2")
+set(clipper2_LIB_DIR "${EXT_PATH}/clipper2/lib")
+set(clipper2_LIBS "${clipper2_LIB_DIR}/Clipper2.lib")
+
+
+find_package(PkgConfig REQUIRED)
+
+find_package(glm CONFIG REQUIRED)
+find_package(entt CONFIG REQUIRED)
+find_package(Vulkan REQUIRED)
+find_package(mimalloc REQUIRED)
+find_package(spdlog REQUIRED)
+find_package(fmt CONFIG REQUIRED)
+find_package(Eigen3 CONFIG REQUIRED)
+find_package(rttr CONFIG REQUIRED)
+find_package(Taskflow CONFIG REQUIRED)
+find_package(TBB CONFIG REQUIRED)
+find_package(glslang CONFIG REQUIRED)
+
+find_package(LLVM CONFIG REQUIRED)
+find_package(MLIR CONFIG REQUIRED)
+   
+
+find_package(spirv_cross_core CONFIG REQUIRED)
+#target_link_libraries(main PRIVATE spirv-cross-core)
+
+#find_package(spirv_cross_cpp CONFIG REQUIRED)
+#target_link_libraries(main PRIVATE spirv-cross-cpp)
+
+find_package(spirv_cross_glsl CONFIG REQUIRED)
+#target_link_libraries(main PRIVATE spirv-cross-glsl)
+
+find_package(spirv_cross_hlsl CONFIG REQUIRED)
+#target_link_libraries(main PRIVATE spirv-cross-hlsl)
+
+#find_package(spirv_cross_msl CONFIG REQUIRED)
+
+
+#target_link_libraries(main PRIVATE spirv-cross-msl)
+
+find_package(spirv_cross_reflect CONFIG REQUIRED)
+#target_link_libraries(main PRIVATE spirv-cross-reflect)
+
+find_package(spirv_cross_util CONFIG REQUIRED)
+#target_link_libraries(main PRIVATE spirv-cross-util)
+
+find_package(unofficial-lmdb CONFIG REQUIRED)
+
+
+find_path(PARALLEL_HASHMAP_INCLUDE_DIRS "parallel_hashmap/btree.h")
+
+add_subdirectory(Ext/volk)
+add_subdirectory(Ext/SDL)
+
+
+
+add_subdirectory(Source)

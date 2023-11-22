@@ -1,0 +1,181 @@
+
+SET(SRC_WarpEngine
+	"WarpEngine/main.cpp"
+	#"WarpEngine/WarpBase.hpp"
+	#"WarpEngine/WarpMath.hpp"
+	#"WarpEngine/WarpEngine.hpp"
+	#"WarpEngine/WarpEngine.cpp"
+	#"WarpEngine/WarpError.hpp"
+	#"WarpEngine/WarpEarCut.hpp"
+	#"WarpEngine/WarpString.cpp"
+	#"WarpEngine/WarpString.hpp"
+	#"Image/stb_image_write.h" 
+	#"Image/stb_image_resize.h" 
+	#"Image/image.h"
+	#"Image/stb_image.h" 
+	#"Image/image.cpp"
+	#"WSCS/WSCS.hpp"
+	#"WSCS/WSCAST.hpp"
+	#"WSCS/WSCLexer.hpp"
+	#"WSCS/WSCParser.hpp"
+	"Loaders/tiny_obj_loader.h"
+	"Loaders/tiny_obj_loader.cpp"
+
+	"WarpEngine/windows-helper.cpp"
+	"WarpEngine/windows-helper.hpp"
+	
+	"Core/utils.hpp"
+	"Core/log.hpp"
+	"Core/math.hpp"
+	"Core/utils.cpp"
+	"Core/vma.cpp"
+	"Core/vma.hpp"
+	"Core/vk_mem_alloc.h"
+	"Core/common.hpp"
+
+	"Render/context.hpp"
+	"Render/context.cpp"
+	"Render/swapchain.cpp"
+	"Render/swapchain.hpp"
+	"Render/render_window.cpp"
+	"Render/render_window.hpp"
+	"Render/pipeline.hpp"
+	"Render/pipeline.cpp"
+	"Render/renderpass.cpp"
+	"Render/renderpass.hpp"
+	"Render/glsl_compiler.hpp"
+	"Render/glsl_compiler.cpp"
+	"Render/rendertarget.cpp"
+	"Render/rendertarget.hpp"
+	"Render/framebuffer.hpp"
+	"Render/framebuffer.cpp"
+	"Render/image.cpp"
+	"Render/image.hpp"
+	"Render/image_view.hpp"
+	"Render/image_view.cpp"
+	"Render/command_buffer.cpp"
+	"Render/command_buffer.hpp"
+	"Render/command_pool.hpp"
+	"Render/command_pool.cpp"
+)
+
+set(ONCE 
+	"OnceVulkanMain.cpp"
+
+	"Core/Utils.cpp"
+	"Core/Utils.h"
+	"Core/Log.h"
+	"Core/MIStl.h"
+	"Core/MIResource.h"
+	"Core/MIResource.cpp"
+
+	"Loaders/tiny_obj_loader.h" 
+	"Loaders/tiny_obj_loader.cpp" 
+
+	"Image/image.h"
+	"Image/stb_image.h" 
+	"Image/image.cpp"
+
+	"Graphics/GPUFactory.h"
+	"Graphics/GPUFactory.cpp"
+	"Graphics/GPUResource.h"
+	"Graphics/GPUResource.cpp"
+	"Graphics/GPUResourceBuilder.h"
+	"Graphics/GPUResourceBuilder.cpp"
+	
+	
+	"Graphics/GPUResourceManager.h" 
+	"Graphics/GPUResourceManager.cpp" 
+	"Graphics/GPURenderGraph.h" 
+	"Graphics/GPUHelper.h" 
+	"Graphics/GPUHelper.cpp" 
+	"Graphics/GPUShaderCompiler.h" 
+	"Graphics/GPUShaderCompiler.cpp"
+	"Graphics/GPUResourceBase.h"
+	"Graphics/GPUResourceBase.cpp"
+	"Graphics/GPUResourceHandle.h" 
+	"Graphics/Vma/vma.cpp"
+	"Graphics/Vma/vma.h"
+	"Graphics/Vma/vk_mem_alloc.h"
+	"Graphics/VulkanFiles.h"
+
+	"Graphics/GPUResource/GPUSwapChain.h" 
+	"Graphics/GPUResource/GPUImage.h" 
+	"Graphics/GPUResource/GPUImage.cpp" 
+	"Graphics/GPUResource/GPUFence.h" 
+	"Graphics/GPUResource/GPUFence.cpp" 
+	"Graphics/GPUResource/GPUSemaphore.h" 
+	"Graphics/GPUResource/GPUSemaphore.cpp" 
+	"Graphics/GPUResource/GPUBuffer.h" 
+	"Graphics/GPUResource/GPUBuffer.cpp" 
+	"Graphics/GPUResource/GPUFrameBuffer.h"
+	"Graphics/GPUResource/GPUFrameBuffer.cpp"
+	"Graphics/GPUResource/GPURenderPass.h"
+	"Graphics/GPUResource/GPURenderPass.cpp"
+	"Graphics/GPUResource/GPUGraphicsPipeline.h" 
+	"Graphics/GPUResource/GPUGraphicsPipeline.cpp"
+	"Graphics/GPUResource/GPUCommandPool.h"
+	"Graphics/GPUResource/GPUCommandPool.cpp"
+	"Graphics/GPUResource/GPUCommandBuffer.h"
+	"Graphics/GPUResource/GPUCommandBuffer.cpp"
+	"Graphics/GPUResource/GPUShader.h" 
+	"Graphics/GPUResource/GPUShader.cpp"
+	"Graphics/GPUResource/GPUDescriptorPool.h"
+	"Graphics/GPUResource/GPUDescriptorPool.cpp"
+	"Graphics/GPUResource/GPUPipelineLayout.h"
+	"Graphics/GPUResource/GPUPipelineLayout.cpp"
+	"Graphics/Builder/GPUBufferBuilder.h"
+	"Graphics/Builder/GPUBufferBuilder.cpp"
+	"Graphics/Builder/GPUImageBuilder.h" 
+	"Graphics/Builder/GPUImageBuilder.cpp"
+	"Graphics/Builder/GPUSwapChainBuilder.h" 
+	"Graphics/Builder/GPUSwapChainBuilder.cpp" 
+	"Graphics/Builder/GPUFrameBufferBuilder.h" 
+	"Graphics/Builder/GPUFrameBufferBuilder.cpp"
+)
+
+add_executable(WarpEngine ${ONCE} )
+add_definitions(${LLVM_DEFINITIONS})
+
+
+target_include_directories(WarpEngine PRIVATE "." 
+${LLVM_INCLUDE_DIRS}
+${MLIR_INCLUDE_DIRS}
+${iwasm_INCLUDE_DIR}
+${mmg_INCLUDE_DIR}
+${ktx_INCLUDE_DIR}
+${PARALLEL_HASHMAP_INCLUDE_DIRS}
+)
+llvm_map_components_to_libnames(llvm_libs support core irreader)
+message(status ===================================================================== mlir-headers)
+target_link_libraries(WarpEngine PRIVATE 
+    EnTT::EnTT 
+    glm::glm 
+   # Vulkan::Vulkan 
+    mimalloc
+    spdlog::spdlog
+    fmt::fmt
+    Eigen3::Eigen
+   # glfw
+   # RTTR::Core
+    #unofficial::gainput::gainput
+    Taskflow::Taskflow
+    TBB::tbb
+    glslang::OSDependent glslang::glslang glslang::MachineIndependent glslang::GenericCodeGen glslang::glslang-default-resource-limits glslang::OGLCompiler glslang::SPVRemapper glslang::SPIRV glslang::HLSL
+    ${mmg_LIBS}
+    ${clipper2_LIBS}
+    ${iwasm_LIBS}
+    ${llvm_libs}
+    MLIRIR
+    spirv-cross-core
+    spirv-cross-glsl
+    spirv-cross-reflect
+    SDL3::SDL3
+    volk::volk
+    unofficial::lmdb::lmdb
+)
+target_precompile_headers(WarpEngine PRIVATE 
+    #"WarpEngine/WarpBase.hpp"
+    #"WarpEngine/WarpMath.hpp"
+)
+
