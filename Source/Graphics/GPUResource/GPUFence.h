@@ -32,14 +32,14 @@ namespace Warp {
 		}
 
 		inline void wait_for_fences(const MVector<GPUFence*>& fences) {
-			MVector<VkFence> res{};
-			std::ranges::transform(fences, std::back_inserter(res), [](const GPUFence* fence) { return fence->m_fence; });
+			MVector<VkFence> res{ fences.size() };
+			std::ranges::transform(fences, res.begin(), [](const GPUFence* fence) { return fence->m_fence; });
 			wait_for_fences(res);
 		}
 
 		inline void reset_fences(const MVector<GPUFence*>& fences) {
-			MVector<VkFence> res{};
-			std::ranges::transform(fences, std::back_inserter(res),[](const GPUFence* fence) { return fence->m_fence; });
+			MVector<VkFence> res{ fences .size()};
+			std::ranges::transform(fences, res.begin(),[](const GPUFence* fence) { return fence->m_fence; });
 			reset_fences(res);
 		}
 	}

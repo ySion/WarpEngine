@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Graphics/GPUResourceBuilder.h"
+#include "Graphics/GPUResourceManager.h"
 #include "Graphics/GPUResource/GPUImage.h"
 
 namespace Warp {
@@ -150,7 +150,7 @@ namespace Warp {
 					if (res = vmaCreateImage(GPUFactory::get_vma(), &create_info.ci_image, &create_info.ci_allocation, &image, &allocation, nullptr);
 						VK_SUCCESS != res) {
 						const char* code_desc = get_vk_result_string(res);
-						LOGE("[GPUResourceBuilder<{}>] create failed, return code {} {}.", typeid(target_type).name(), code_desc, static_cast<int32_t>(res));
+						LOGE("[GPUResourceBuilder<{}>] Name \"{}\" create failed, return code {} {}.", typeid(target_type).name(), create_info.name, code_desc, static_cast<int32_t>(res));
 						return nullptr;
 					}
 
@@ -200,7 +200,7 @@ namespace Warp {
 
 				} catch (...) {
 					const char* code_desc = get_vk_result_string(res);
-					LOGE("[GPUResourceBuilder<{}>] create failed, return code {} {}.", typeid(target_type).name(), code_desc, static_cast<int32_t>(res));
+					LOGE("[GPUResourceBuilder<{}>] Name \"{}\" create failed, return code {} {}.", typeid(target_type).name(), create_info.name, code_desc, static_cast<int32_t>(res));
 					return nullptr;
 				}
 			}
@@ -212,8 +212,7 @@ namespace Warp {
 					if (!create_info.name.empty()) {
 						create_info.name = to_MString(std::format("{}_{}", name, i));
 					}
-					auto obj = make(replace);
-					if (obj) {
+					if (auto obj = make(replace)) {
 						result.push_back(obj);
 					}
 				}

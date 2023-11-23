@@ -15,10 +15,18 @@
 #include "Graphics/GPUResourceManager.h"
 #include "Graphics/GPUShaderCompiler.h"
 #include "Loaders/tiny_obj_loader.h"
+
 #include "Graphics/Builder/GPUBufferBuilder.h"
 #include "Graphics/Builder/GPUImageBuilder.h"
 #include "Graphics/Builder/GPUSwapChainBuilder.h"
 #include "Graphics/Builder/GPUFrameBufferBuilder.h"
+#include "Graphics/Builder/GPUCommandPoolBuilder.h"
+#include "Graphics/Builder/GPUCommandBufferBuilder.h"
+#include "Graphics/Builder/GPUFenceBuilder.h"
+#include "Graphics/Builder/GPUSemaphoreBuilder.h"
+#include "Graphics/Builder/GPURenderPassBuilder.h"
+#include "Graphics/Builder/GPUGraphicsPipelineBuilder.h"
+#include "Graphics/Builder/GPUPipelineLayoutBuilder.h"
 
 #include "Image/image.h"
 
@@ -141,11 +149,11 @@ int main() {
 		.add_attachment(VK_FORMAT_B8G8R8A8_SRGB, VK_SAMPLE_COUNT_8_BIT, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
 		.add_attachment(VK_FORMAT_B8G8R8A8_SRGB, VK_SAMPLE_COUNT_1_BIT, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR)
 		.add_subpass({
-			.m_color_attachment_refs = {0},
-			.m_input_attachment_refs = {},
-			.m_resolve_attachment_refs = {1},
-			.m_depth_stencil_resolve_attachment_ref = {},
-			.m_preserve_attachment_refs = {}
+			.color_attachment_refs = {0},
+			.input_attachment_refs = {},
+			.resolve_attachment_refs = {1},
+			.depth_stencil_resolve_attachment_ref = {},
+			.preserve_attachment_refs = {}
 		}).make();
 
 
@@ -153,11 +161,9 @@ int main() {
 		.template_color_2D({ swap1->m_extent.width, swap1->m_extent.height}, VK_FORMAT_B8G8R8A8_SRGB, VK_SAMPLE_COUNT_8_BIT)
 		.make();
 
-
 	auto semaphore_wait_for = command_semaphore_manager->builder("semaphore_wait_for").make_multi(command_frame_buffer_count);
 	auto semaphore_render_ok = command_semaphore_manager->builder("semaphore_render_ok").make_multi(command_frame_buffer_count);
-	auto fences = command_fence_manager->builder().make_multi(command_frame_buffer_count);
-
+	auto fences = command_fence_manager->builder("fences").make_multi(command_frame_buffer_count);
 
 	command_semaphore_manager->find_by_name_start_with("hello");
 	if (semaphore_wait_for.empty() || semaphore_render_ok.empty() || fences.empty()) {
@@ -165,14 +171,18 @@ int main() {
 		exit(0);
 	}
 
-	auto pool = command_pool_manager->builder("main_command_pool").make();
+	auto pool = command_pool_manager->builder("main_command_pool").set_configs(VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT).make();
 
-	auto cmd_buffer = command_buffer_manager->builder("main_command_buffer").set_command_pool(pool).set_level(VK_COMMAND_BUFFER_LEVEL_PRIMARY).make_multi(command_frame_buffer_count);
+	auto cmd_buffer = command_buffer_manager->builder("main_command_buffer").set_configs(pool).make_multi(command_frame_buffer_count);
 
 	auto layout = layout_manager->builder().make();
 
-	auto vert_sh = shader_manager->builder("shader_1").make_from_file("../../../Shader/shader.vert", EShLangVertex);
-	auto frag_sh = shader_manager->builder("shader_2").make_from_file("../../../Shader/shader.frag", EShLangFragment);
+	//auto vert_sh = shader_manager->builder("shader_1").make_from_file("../../../Shader/shader.vert", EShLangVertex);
+	//auto frag_sh = shader_manager->builder("shader_2").make_from_file("../../../Shader/shader.frag", EShLangFragment);
+
+	auto vert_sh = shader_manager->builder("shader_1").make_from_file("shader.vert", EShLangVertex);
+	auto frag_sh = shader_manager->builder("shader_2").make_from_file("shader.frag", EShLangFragment);
+
 
 	if (!vert_sh || !frag_sh) {
 		println("error in shader");
@@ -180,24 +190,24 @@ int main() {
 
 	auto pipeline = pipeline_manager->builder("main_pipeline")
 		.set_render_pass(renderpass, 0)
-		.set_shaders(vert_sh, nullptr, nullptr, nullptr, frag_sh)
-		.set_input_assembly_state(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP)
-		.set_rasterization_state(VK_POLYGON_MODE_FILL)
-		.add_color_blend_attachment_state()
-		.set_color_blend_state()
+		.set_state_shaders(vert_sh, nullptr, nullptr, nullptr, frag_sh)
+		.set_state_input_assembly(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP)
+		.set_state_multisample(VK_SAMPLE_COUNT_8_BIT)
+		.set_state_rasterization(VK_POLYGON_MODE_FILL)
+		.add_color_blend_attachment()
+		.set_state_color_blend()
 		.set_layout(layout)
-		.set_multisample_state(VK_SAMPLE_COUNT_8_BIT)
 		.make();
 
 	auto pipeline_frame = pipeline_manager->builder("main_pipeline_frame")
 		.set_render_pass(renderpass, 0)
-		.set_shaders(vert_sh, nullptr, nullptr, nullptr, frag_sh)
-		.set_input_assembly_state(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP)
-		.set_rasterization_state(VK_POLYGON_MODE_LINE)
-		.add_color_blend_attachment_state()
-		.set_color_blend_state()
+		.set_state_shaders(vert_sh, nullptr, nullptr, nullptr, frag_sh)
+		.set_state_input_assembly(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP)
+		.set_state_multisample(VK_SAMPLE_COUNT_8_BIT)
+		.set_state_rasterization(VK_POLYGON_MODE_LINE)
+		.add_color_blend_attachment()
+		.set_state_color_blend()
 		.set_layout(layout)
-		.set_multisample_state(VK_SAMPLE_COUNT_8_BIT)
 		.make();
 
 	std::vector<Warp::GPU::GPUResourceHandle<Warp::GPU::GPUFrameBuffer>> frame_buffers{};
@@ -564,8 +574,6 @@ int main2() {
 		auto res = vmaCreateAllocator(&vma_allocator_create_info, &vma_allocator);
 		VK_CHECK(res);
 	}
-
-
 
 	std::printf("\n====SwapChain==============================================================================\n");
 

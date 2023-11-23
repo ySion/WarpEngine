@@ -1,7 +1,9 @@
 #pragma once
 
-#include "Graphics/GPUResourceBuilder.h"
+#include "Graphics/GPUResourceManager.h"
+#include "Graphics/GPUResource/GPUImage.h"
 #include "Graphics/GPUResource/GPUFrameBuffer.h"
+#include "Graphics/GPUResource/GPURenderPass.h"
 
 namespace Warp {
 	namespace GPU {
@@ -84,7 +86,7 @@ namespace Warp {
 					if (res = vkCreateFramebuffer(GPUFactory::get_device(), &create_info.ci_framebuffer, nullptr, &frame_buffer);
 						VK_SUCCESS != res) {
 						const char* code_desc = get_vk_result_string(res);
-						LOGE("[GPUResourceBuilder<{}>] create failed, return code {} {}.", typeid(target_type).name(), code_desc, static_cast<int32_t>(res));
+						LOGE("[GPUResourceBuilder<{}>] Name \"{}\" create failed, return code {} {}.", typeid(target_type).name(), create_info.name, code_desc, static_cast<int32_t>(res));
 						return nullptr;
 					}
 
@@ -104,7 +106,7 @@ namespace Warp {
 
 				} catch (...) {
 					const char* code_desc = get_vk_result_string(res);
-					LOGE("[GPUResourceBuilder<{}>] create failed, return code {} {}.", typeid(target_type).name(), code_desc, static_cast<int32_t>(res));
+					LOGE("[GPUResourceBuilder<{}>] Name \"{}\" create failed, return code {} {}.", typeid(target_type).name(), create_info.name, code_desc, static_cast<int32_t>(res));
 					return nullptr;
 				}
 			}

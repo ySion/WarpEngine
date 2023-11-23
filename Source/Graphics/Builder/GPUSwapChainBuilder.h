@@ -1,9 +1,8 @@
 #pragma once
 
-#include "Graphics/GPUResourceBuilder.h"
+#include "Graphics/GPUResourceManager.h"
 #include "Graphics/GPUResource/GPUBuffer.h"
 #include "Graphics/GPUResource/GPUSwapChain.h"
-
 
 namespace Warp {
 	namespace GPU {
@@ -74,12 +73,12 @@ namespace Warp {
 
 				//Create new swapchain
 				if(!SDL_Vulkan_CreateSurface(old_swapchain->m_window, GPUFactory::get_instance(), nullptr, &surface)){
-					LOGE("[GPUResourceBuilder<{}>] Failed to Recreate Swapchain surface, error: {}.", typeid(target_type).name(), SDL_GetError());
+					LOGE("[GPUResourceBuilder<{}>] Name \"{}\"  Failed to Recreate Swapchain surface, error: {}.", typeid(target_type).name(), old_swapchain->get_name(), SDL_GetError());
 					throw std::runtime_error("Recreate SwapChain failed, application crashed.");
 				}
 
 				if(surface == VK_NULL_HANDLE) {
-					LOGE("[GPUResourceBuilder<{}>] Failed to Recreate Swapchain, Surface create function called successfully, but Surface is nullptr.", typeid(target_type).name());
+					LOGE("[GPUResourceBuilder<{}>] Name \"{}\"  Failed to Recreate Swapchain, Surface create function called successfully, but Surface is nullptr.", typeid(target_type).name(), old_swapchain->get_name());
 					throw std::runtime_error("Recreate SwapChain failed, application crashed.");
 				}
 
@@ -109,7 +108,7 @@ namespace Warp {
 					if (res = vkCreateSwapchainKHR(GPUFactory::get_device(), &ci_swapchain, nullptr, &swapchain);
 						res != VK_SUCCESS) {
 						const char* code_desc = get_vk_result_string(res);
-						LOGC("[GPUResourceBuilder<{}>] Recreate SwapChain failed, application crashed, error code:{} {}.", typeid(target_type).name(), code_desc, static_cast<int32_t>(res));
+						LOGC("[GPUResourceBuilder<{}>] Name \"{}\"  Recreate SwapChain failed, application crashed, error code:{} {}.", typeid(target_type).name(), old_swapchain->get_name(), code_desc, static_cast<int32_t>(res));
 						throw std::runtime_error("Recreate SwapChain failed, application crashed.");
 					}
 
@@ -147,7 +146,7 @@ namespace Warp {
 					old_swapchain->m_image_view = std::move(vk_image_views);
 					
 				} catch (...) {
-					LOGC("[GPUResourceBuilder<{}>] Recreate SwapChain failed, application crashed, error code: {}", typeid(target_type).name(), static_cast<int32_t>(res));
+					LOGC("[GPUResourceBuilder<{}>] Name \"{}\" Recreate SwapChain failed, application crashed, error code: {}", typeid(target_type).name(), old_swapchain->get_name(), static_cast<int32_t>(res));
 					throw std::runtime_error("Recreate SwapChain failed, application crashed.");
 				}
 
@@ -171,11 +170,11 @@ namespace Warp {
 						create_info.window_flag | SDL_WINDOW_VULKAN);
 
 					if (!window) {
-						LOGE("[GPUResourceBuilder<{}>] Failed to create SDL_Window, error: {}.", typeid(target_type).name(), SDL_GetError());
+						LOGE("[GPUResourceBuilder<{}>] Name \"{}\" Failed to create SDL_Window, error: {}.", typeid(target_type).name(), create_info.name, SDL_GetError());
 						return nullptr;
 					}
 				} catch (...) {
-					LOGE("[GPUResourceBuilder<{}>] Failed to create SDL_Window, error: {}.", typeid(target_type).name(), SDL_GetError());
+					LOGE("[GPUResourceBuilder<{}>] Name \"{}\" Failed to create SDL_Window, error: {}.", typeid(target_type).name(), create_info.name, SDL_GetError());
 					return nullptr;
 				}
 
@@ -183,19 +182,19 @@ namespace Warp {
 
 				try {
 					if (!SDL_Vulkan_CreateSurface(window, GPUFactory::get_instance(), nullptr, &surface)) {
-						LOGE("[GPUResourceBuilder<{}>] Failed to create Surface, error: {}.", typeid(target_type).name(), SDL_GetError());
+						LOGE("[GPUResourceBuilder<{}>] Name \"{}\" Failed to create Surface, error: {}.", typeid(target_type).name(), create_info.name, SDL_GetError());
 						return nullptr;
 					}
 
 					if (!surface) {
-						LOGE("[GPUResourceBuilder<{}>] Failed to create Surface, create function called successfully, but Surface is nullptr.", typeid(target_type).name());
+						LOGE("[GPUResourceBuilder<{}>] Name \"{}\" Failed to create Surface, create function called successfully, but Surface is nullptr.", typeid(target_type).name(), create_info.name);
 						return nullptr;
 					}
 
 					create_info.ci_swapchain.surface = surface;
 
 				} catch (...) {
-					LOGE("[GPUResourceBuilder<{}>] Failed to create Surface, error: {}.", typeid(target_type).name(), SDL_GetError());
+					LOGE("[GPUResourceBuilder<{}>] Name \"{}\" Failed to create Surface, error: {}.", typeid(target_type).name(), create_info.name, SDL_GetError());
 					return nullptr;
 				}
 
@@ -206,7 +205,7 @@ namespace Warp {
 					if (res = vkCreateSwapchainKHR(GPUFactory::get_device(), &create_info.ci_swapchain, nullptr, &swapchain);
 						res != VK_SUCCESS) {
 						const char* code_desc = get_vk_result_string(res);
-						LOGE("[GPUResourceBuilder<{}>] create failed, return code {} {}.", typeid(target_type).name(), code_desc, static_cast<int32_t>(res));
+						LOGE("[GPUResourceBuilder<{}>] Name \"{}\" create failed, return code {} {}.", typeid(target_type).name(), create_info.name, code_desc, static_cast<int32_t>(res));
 						return nullptr;
 					}
 
@@ -257,7 +256,7 @@ namespace Warp {
 					return temp_ptr;
 				} catch (...) {
 					const char* code_desc = get_vk_result_string(res);
-					LOGE("[GPUResourceBuilder<{}>] create failed, return code {} {}.", typeid(target_type).name(), code_desc, static_cast<int32_t>(res));
+					LOGE("[GPUResourceBuilder<{}>] Name \"{}\" create failed, return code {} {}.", typeid(target_type).name(), create_info.name, code_desc, static_cast<int32_t>(res));
 					return nullptr;
 				}
 			}

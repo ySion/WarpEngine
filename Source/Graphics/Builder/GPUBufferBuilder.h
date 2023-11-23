@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Graphics/GPUResourceBuilder.h"
+#include "Graphics/GPUResourceManager.h"
 #include "Graphics/GPUResource/GPUBuffer.h"
 
 namespace Warp {
@@ -140,7 +140,7 @@ namespace Warp {
 					if (res = vmaCreateBuffer(GPUFactory::get_vma(), &create_info.ci_buffer, &create_info.ci_allocation, &buffer, &allocation, nullptr);
 						res != VK_SUCCESS) {
 						const char* code_desc = get_vk_result_string(res);
-						LOGE("[GPUResourceBuilder<{}>] create failed, return code {} {}.", typeid(target_type).name(), code_desc, static_cast<int32_t>(res));
+						LOGE("[GPUResourceBuilder<{}>] Name \"{}\" create failed, return code {} {}.", typeid(target_type).name(), create_info.name, code_desc, static_cast<int32_t>(res));
 						return nullptr;
 					}
 
@@ -156,7 +156,7 @@ namespace Warp {
 					return temp_ptr;
 				} catch (...) {
 					const char* code_desc = get_vk_result_string(res);
-					LOGE("[GPUResourceBuilder<{}>] create failed, return code {} {}.", typeid(target_type).name(), code_desc, static_cast<int32_t>(res));
+					LOGE("[GPUResourceBuilder<{}>] Name \"{}\" create failed, return code {} {}.", typeid(target_type).name(), create_info.name, code_desc, static_cast<int32_t>(res));
 					return nullptr;
 				}
 			}

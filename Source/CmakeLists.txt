@@ -78,73 +78,124 @@ set(ONCE
 
 	"Graphics/GPUFactory.h"
 	"Graphics/GPUFactory.cpp"
+
 	"Graphics/GPUResource.h"
 	"Graphics/GPUResource.cpp"
+
 	"Graphics/GPUResourceBuilder.h"
 	"Graphics/GPUResourceBuilder.cpp"
 	
 	
 	"Graphics/GPUResourceManager.h" 
 	"Graphics/GPUResourceManager.cpp" 
+
 	"Graphics/GPURenderGraph.h" 
+
 	"Graphics/GPUHelper.h" 
 	"Graphics/GPUHelper.cpp" 
+
 	"Graphics/GPUShaderCompiler.h" 
 	"Graphics/GPUShaderCompiler.cpp"
+
 	"Graphics/GPUResourceBase.h"
 	"Graphics/GPUResourceBase.cpp"
+
 	"Graphics/GPUResourceHandle.h" 
-	"Graphics/Vma/vma.cpp"
+
 	"Graphics/Vma/vma.h"
+	"Graphics/Vma/vma.cpp"
+
 	"Graphics/Vma/vk_mem_alloc.h"
+
 	"Graphics/VulkanFiles.h"
 
+
+
 	"Graphics/GPUResource/GPUSwapChain.h" 
+	"Graphics/GPUResource/GPUSwapChain.cpp" 
+
 	"Graphics/GPUResource/GPUImage.h" 
 	"Graphics/GPUResource/GPUImage.cpp" 
+
 	"Graphics/GPUResource/GPUFence.h" 
 	"Graphics/GPUResource/GPUFence.cpp" 
-	"Graphics/GPUResource/GPUSemaphore.h" 
+
+	"Graphics/GPUResource/GPUSemaphore.h"
 	"Graphics/GPUResource/GPUSemaphore.cpp" 
+
 	"Graphics/GPUResource/GPUBuffer.h" 
 	"Graphics/GPUResource/GPUBuffer.cpp" 
+
 	"Graphics/GPUResource/GPUFrameBuffer.h"
 	"Graphics/GPUResource/GPUFrameBuffer.cpp"
+
 	"Graphics/GPUResource/GPURenderPass.h"
 	"Graphics/GPUResource/GPURenderPass.cpp"
+
 	"Graphics/GPUResource/GPUGraphicsPipeline.h" 
 	"Graphics/GPUResource/GPUGraphicsPipeline.cpp"
+
 	"Graphics/GPUResource/GPUCommandPool.h"
 	"Graphics/GPUResource/GPUCommandPool.cpp"
+
 	"Graphics/GPUResource/GPUCommandBuffer.h"
 	"Graphics/GPUResource/GPUCommandBuffer.cpp"
+
 	"Graphics/GPUResource/GPUShader.h" 
 	"Graphics/GPUResource/GPUShader.cpp"
+
 	"Graphics/GPUResource/GPUDescriptorPool.h"
 	"Graphics/GPUResource/GPUDescriptorPool.cpp"
+
 	"Graphics/GPUResource/GPUPipelineLayout.h"
 	"Graphics/GPUResource/GPUPipelineLayout.cpp"
+
+	######################################################
+
 	"Graphics/Builder/GPUBufferBuilder.h"
 	"Graphics/Builder/GPUBufferBuilder.cpp"
+
 	"Graphics/Builder/GPUImageBuilder.h" 
 	"Graphics/Builder/GPUImageBuilder.cpp"
+
 	"Graphics/Builder/GPUSwapChainBuilder.h" 
 	"Graphics/Builder/GPUSwapChainBuilder.cpp" 
+
 	"Graphics/Builder/GPUFrameBufferBuilder.h" 
 	"Graphics/Builder/GPUFrameBufferBuilder.cpp"
+
+	"Graphics/Builder/GPUCommandPoolBuilder.h"
+	"Graphics/Builder/GPUCommandPoolBuilder.cpp"
+
+	"Graphics/Builder/GPUCommandBufferBuilder.h"
+	"Graphics/Builder/GPUCommandBufferBuilder.cpp"
+
+	"Graphics/Builder/GPUFenceBuilder.h" 
+	"Graphics/Builder/GPUFenceBuilder.cpp" 
+
+	"Graphics/Builder/GPUSemaphoreBuilder.h"
+	"Graphics/Builder/GPUSemaphoreBuilder.cpp" 
+
+	"Graphics/Builder/GPURenderPassBuilder.h" 
+	"Graphics/Builder/GPURenderPassBuilder.cpp"
+
+	"Graphics/Builder/GPUGraphicsPipelineBuilder.h"
+	"Graphics/Builder/GPUGraphicsPipelineBuilder.cpp"
+
+	"Graphics/Builder/GPUPipelineLayoutBuilder.h"
+	"Graphics/Builder/GPUPipelineLayoutBuilder.cpp"
 )
 
 add_executable(WarpEngine ${ONCE} )
 add_definitions(${LLVM_DEFINITIONS})
 
-
 target_include_directories(WarpEngine PRIVATE "." 
-${LLVM_INCLUDE_DIRS}
-${MLIR_INCLUDE_DIRS}
-${iwasm_INCLUDE_DIR}
-${mmg_INCLUDE_DIR}
-${ktx_INCLUDE_DIR}
-${PARALLEL_HASHMAP_INCLUDE_DIRS}
+	${LLVM_INCLUDE_DIRS}
+	${MLIR_INCLUDE_DIRS}
+	${iwasm_INCLUDE_DIR}
+	${mmg_INCLUDE_DIR}
+	${ktx_INCLUDE_DIR}
+	${PARALLEL_HASHMAP_INCLUDE_DIRS}
 )
 llvm_map_components_to_libnames(llvm_libs support core irreader)
 message(status ===================================================================== mlir-headers)
