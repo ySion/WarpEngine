@@ -173,6 +173,9 @@ namespace Warp {
 						LOGE("[GPUResourceBuilder<{}>] Name \"{}\" Failed to create SDL_Window, error: {}.", typeid(target_type).name(), create_info.name, SDL_GetError());
 						return nullptr;
 					}
+
+					SDL_SetWindowMinimumSize(window, 128, 72);
+					
 				} catch (...) {
 					LOGE("[GPUResourceBuilder<{}>] Name \"{}\" Failed to create SDL_Window, error: {}.", typeid(target_type).name(), create_info.name, SDL_GetError());
 					return nullptr;

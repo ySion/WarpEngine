@@ -16,12 +16,23 @@ namespace Warp {
 				VkPipelineLayoutCreateInfo ci_layout{
 					.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO
 				};
+				MVector<VkPushConstantRange> push_constant_ranges{};
+				MVector<VkDescriptorSetLayout> set_layouts{};
 			};
 
 			GPUResourceBuilder(GPUResourceManager<target_type>* manager, const MString& name) : m_manager(manager) {
 				create_info.name = name;
 			}
 
+			self_type& add_set_layout(const VkDescriptorSetLayout& range) {
+				create_info.set_layouts.push_back(range);
+				return *this;
+			}
+
+			self_type& add_push_constant(const VkPushConstantRange& range) {
+				create_info.push_constant_ranges.push_back(range);
+				return *this;
+			}
 
 			target_type* make(bool replace = false) {
 				if (!create_info.name.empty() && m_manager->find_by_name(create_info.name) && !replace) {
@@ -37,10 +48,10 @@ namespace Warp {
 						.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
 						.pNext = nullptr,
 						.flags = 0,
-						.setLayoutCount = 0,
-						.pSetLayouts = nullptr,
-						.pushConstantRangeCount = 0,
-						.pPushConstantRanges = nullptr
+						.setLayoutCount = static_cast<uint32_t>(create_info.set_layouts.size()),
+						.pSetLayouts = create_info.set_layouts.data(),
+						.pushConstantRangeCount = static_cast<uint32_t>(create_info.push_constant_ranges.size()),
+						.pPushConstantRanges = create_info.push_constant_ranges.data()
 					};
 
 					if (res = vkCreatePipelineLayout(GPUFactory::get_device(), &create_info.ci_layout, nullptr, &layout);

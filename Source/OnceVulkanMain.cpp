@@ -1944,8 +1944,8 @@ int main2() {
 	
 	size_t now_time = SDL_GetTicks();
 	size_t fpstime = now_time;
-
 	uint32_t fps = 0;
+
 	while (!should_close) {
 		SDL_PollEvent(&event);
 		if (event.type == SDL_EVENT_QUIT) {
@@ -1953,6 +1953,8 @@ int main2() {
 		}
 		logic_func(event);
 		rendering_func();
+
+
 		now_time = SDL_GetTicks();
 		if(now_time - fpstime > 1000)
 		{

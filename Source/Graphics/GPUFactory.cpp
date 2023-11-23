@@ -18,7 +18,6 @@ namespace Warp {
 			vk_application_info.pEngineName = "Warp Engine";
 			vk_application_info.engineVersion = VK_MAKE_VERSION(1, 0, 0);
 
-
 			VkInstanceCreateInfo vk_instance_create_info{};
 			vk_instance_create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 			vk_instance_create_info.enabledExtensionCount = create_info.enable_instance_extension.size();
@@ -57,8 +56,6 @@ namespace Warp {
 						temp_score = current_score;
 						pick_index = i;
 					}
-
-					//println("{} : {}\n", i, vk_physical_device_properties.deviceName);
 				}
 
 				m_vk_physical_device_ = vk_physical_devices[pick_index];
