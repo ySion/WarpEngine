@@ -46,7 +46,7 @@ namespace Warp {
 				try {
 					VkFence fence{};
 					if (res = vkCreateFence(GPUFactory::get_device(), &create_info.ci_fence, nullptr, &fence);
-						res != VK_SUCCESS) {
+						res != VK_SUCCESS || !fence) {
 						const char* code_desc = get_vk_result_string(res);
 						LOGE("[GPUResourceBuilder<{}>] Name \"{}\" create failed, return code {} {}.", typeid(target_type).name(), create_info.name, code_desc, static_cast<int32_t>(res));
 						return nullptr;

@@ -1,8 +1,6 @@
 #pragma once
 
-#include "Graphics/GPUResourceHandle.h"
-#include "Graphics/GPUResourceBase.h"
-#include "Graphics/GPUFactory.h"
+#include "Graphics/GPUResource/GPUResourceBase.h"
 
 #include "GPUResource/GPUFence.h"
 #include "GPUResource/GPUSemaphore.h"
@@ -25,8 +23,4 @@
 
 #include "GPUResource/GPUFrameBuffer.h"
 
-namespace Warp {
-	namespace GPU {
-		//template<class T> class GPUResourceManager;
-	}
-}
+#include "Graphics/GPUResourceHandle.h"

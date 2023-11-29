@@ -1,6 +1,6 @@
 #pragma once
-#include "Graphics/GPUFactory.h"
-#include "Graphics/GPUResourceBase.h"
+
+#include "GPUResourceBase.h"
 
 #include "GPUFence.h"
 #include "GPUSemaphore.h"
@@ -11,7 +11,7 @@ namespace Warp {
 
 		class GPUSwapChain final : public GPUResource {
 		public:
-			inline GPUSwapChain(const MString& name) : GPUResource("swapchain", name) {}
+			inline GPUSwapChain(const MString& name) : GPUResource("swap_chain", name) {}
 
 			~GPUSwapChain() override {
 

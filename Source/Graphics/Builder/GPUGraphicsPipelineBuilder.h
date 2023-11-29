@@ -387,7 +387,7 @@ namespace Warp {
 				try {
 					VkPipeline pipeline{};
 					if (res = vkCreateGraphicsPipelines(GPUFactory::get_device(), nullptr, 1, &create_info.ci_pipeline, nullptr, &pipeline);
-						res != VK_SUCCESS) {
+						res != VK_SUCCESS || !pipeline) {
 						const char* code_desc = get_vk_result_string(res);
 						LOGE("[GPUResourceBuilder<{}>] Name \"{}\" create failed, return code {} {}.", typeid(target_type).name(), create_info.name, code_desc, static_cast<int32_t>(res));
 						return nullptr;
@@ -398,6 +398,7 @@ namespace Warp {
 					obj_ptr->m_render_pass = create_info.render_pass;
 					obj_ptr->m_subpass_idx = create_info.subpass_idx;
 					obj_ptr->m_pipeline = pipeline;
+					obj_ptr->m_pipeline_layout = create_info.layout->m_layout;
 
 					create_info.render_pass->m_pipelines.emplace_back(temp_ptr);
 					m_manager->add(std::move(obj_ptr));

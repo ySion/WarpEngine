@@ -14,6 +14,20 @@
 
 #include "Core/Utils.h"
 
+#include "Graphics/Builder/GPUBufferBuilder.h"
+#include "Graphics/Builder/GPUImageBuilder.h"
+#include "Graphics/Builder/GPUSwapChainBuilder.h"
+#include "Graphics/Builder/GPUFrameBufferBuilder.h"
+#include "Graphics/Builder/GPUCommandPoolBuilder.h"
+#include "Graphics/Builder/GPUCommandBufferBuilder.h"
+#include "Graphics/Builder/GPUFenceBuilder.h"
+#include "Graphics/Builder/GPUSemaphoreBuilder.h"
+#include "Graphics/Builder/GPURenderPassBuilder.h"
+#include "Graphics/Builder/GPUGraphicsPipelineBuilder.h"
+#include "Graphics/Builder/GPUPipelineLayoutBuilder.h"
+#include "Graphics/Builder/GPUDescriptorPoolBuilder.h"
+#include "Graphics/Builder/GPUDescriptorSetLayoutBuilder.h"
+
 namespace Warp {
 	namespace GPU {
 		template<class T> struct GPUResourceBuildTemplate;
@@ -33,6 +47,8 @@ namespace Warp {
 			using GPUPipelineLayout = ::Warp::GPU::GPUPipelineLayout;
 			using GPUFrameBuffer = ::Warp::GPU::GPUFrameBuffer;
 			using GPUBuffer = ::Warp::GPU::GPUBuffer;
+			using GPUDescriptorPool = ::Warp::GPU::GPUDescriptorPool;
+			using GPUDescriptorSetLayout = ::Warp::GPU::GPUDescriptorSetLayout;
 		}
 
 
@@ -127,74 +143,5 @@ namespace Warp {
 		private:
 			CreateInfo create_info{};
 		};
-
-		template<>
-		class GPUResourceBuilder<GPUDescriptorPool> {
-			GPUResourceManager<GPUDescriptorPool>* m_manager{};
-		public:
-			using self_type = GPUResourceBuilder<GPUDescriptorPool>;
-			struct CreateInfo {
-				MString m_name;
-				/*VkDescriptorPoolCreateInfo m_pipeline_layout_create_info{
-					.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
-					.pNext = nullptr,
-					.flags = 0,
-					.maxSets = GPUFactory::get_swap_chain_image_count(),
-					.poolSizeCount = GPUFactory::get_swap_chain_image_count(),
-					.pPoolSizes = 512
-				};*/
-			};
-
-			GPUResourceBuilder(GPUResourceManager<GPUDescriptorPool>* manager, const MString& name) : m_manager(manager) {
-				create_info.m_name = name;
-			}
-		private:
-			CreateInfo create_info{};
-		};
-
-		/*template<>
-		class GPUResourceBuilder<GPUPipelineLayout> {
-			GPUResourceManager<GPUPipelineLayout>* m_manager{};
-		public:
-			using self_type = GPUResourceBuilder<GPUPipelineLayout>;
-
-			struct CreateInfo {
-				MString m_name;
-				VkPipelineLayoutCreateInfo m_pipeline_layout_create_info{};
-			};
-
-			GPUResourceBuilder(GPUResourceManager<GPUPipelineLayout>* manager, const MString& name) : m_manager(manager) {
-				create_info.m_name = name;
-			}
-
-			GPUPipelineLayout* make(){
-				VkPipelineLayout layout{};
-
-				create_info.m_pipeline_layout_create_info = {
-					.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-					.pNext = nullptr,
-					.flags = 0,
-					.setLayoutCount = 0,
-					.pSetLayouts = nullptr,
-					.pushConstantRangeCount = 0,
-					.pPushConstantRanges = nullptr
-				};
-
-				if (VK_SUCCESS != vkCreatePipelineLayout(GPUFactory::get_device(), &create_info.m_pipeline_layout_create_info, nullptr, &layout)) {
-					return nullptr;
-				}
-
-				std::unique_ptr<GPUPipelineLayout> obj_ptr = std::make_unique<GPUPipelineLayout>(create_info.m_name);
-
-				obj_ptr->m_layout = layout;
-				
-				auto temp_ptr = obj_ptr.get();
-				m_manager->add(std::move(obj_ptr));
-
-				return temp_ptr;
-			}
-		private:
-			CreateInfo create_info{};
-		};*/
 	}
 }

@@ -1,6 +1,6 @@
 #pragma once
-#include "Graphics/GPUResourceBase.h"
-#include "Graphics/GPUFactory.h"
+
+#include "GPUResourceBase.h"
 
 #include <algorithm>
 

@@ -212,7 +212,7 @@ namespace Warp {
 					};
 
 					if (auto res = vkCreateRenderPass(GPUFactory::get_device(), &ci_renderpass, nullptr, &render_pass);
-					res != VK_SUCCESS) {
+					res != VK_SUCCESS || !render_pass) {
 						const char* code_desc = get_vk_result_string(res);
 						LOGE("[GPUResourceBuilder<{}>] Name \"{}\" create failed, return code {} {}.", typeid(target_type).name(), create_info.name, code_desc, static_cast<int32_t>(res));
 						return nullptr;

@@ -54,7 +54,7 @@ namespace Warp {
 				return *this;
 			}
 
-			self_type& template_sequential_write_copy_src(VkDeviceSize size) {
+			self_type& template_upload(VkDeviceSize size) {
 
 				create_info.ci_buffer.size = size;
 				create_info.ci_buffer.usage = VkBufferUsageFlagBits::VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
@@ -66,15 +66,37 @@ namespace Warp {
 				return *this;
 			}
 
-			self_type& template_random_write_copy_src(VkDeviceSize size) {
+			self_type& template_readback(VkDeviceSize size) {
 
 				create_info.ci_buffer.size = size;
-				create_info.ci_buffer.usage = VkBufferUsageFlagBits::VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+				create_info.ci_buffer.usage = VkBufferUsageFlagBits::VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 				create_info.ci_buffer.flags = 0;
 
 				create_info.ci_allocation.usage = VMA_MEMORY_USAGE_AUTO;
 				create_info.ci_allocation.flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_RANDOM_BIT;
 
+				return *this;
+			}
+
+			self_type& template_gpu_copy_src_dst(VkDeviceSize size) {
+
+				create_info.ci_buffer.size = size;
+				create_info.ci_buffer.usage = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+				create_info.ci_buffer.flags = 0;
+
+				create_info.ci_allocation.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
+				create_info.ci_allocation.flags = 0;
+				return *this;
+			}
+
+			self_type& template_on_device_storage_copy_src_dst(VkDeviceSize size) {
+
+				create_info.ci_buffer.size = size;
+				create_info.ci_buffer.usage = VkBufferUsageFlagBits::VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+				create_info.ci_buffer.flags = 0;
+
+				create_info.ci_allocation.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
+				create_info.ci_allocation.flags = 0;
 				return *this;
 			}
 
@@ -112,20 +134,6 @@ namespace Warp {
 				return *this;
 			}
 
-
-			//低频率修改的在显卡上的uniform buffer，不能直接进行写入，需要一个中间缓冲区， 但是它很快！
-			self_type& template_on_device_uniform_buffer_copy_dst(VkDeviceSize size) {
-
-				create_info.ci_buffer.size = size;
-				create_info.ci_buffer.usage = VkBufferUsageFlagBits::VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VkBufferUsageFlagBits::VK_BUFFER_USAGE_TRANSFER_DST_BIT;
-				create_info.ci_buffer.flags = 0;
-
-				create_info.ci_allocation.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
-				create_info.ci_allocation.flags = 0;
-				return *this;
-			}
-
-
 			target_type* make(bool replace = false) {
 
 				if (!create_info.name.empty() && m_manager->find_by_name(create_info.name) && !replace) {
@@ -138,7 +146,7 @@ namespace Warp {
 					VkBuffer buffer{};
 					VmaAllocation allocation{};
 					if (res = vmaCreateBuffer(GPUFactory::get_vma(), &create_info.ci_buffer, &create_info.ci_allocation, &buffer, &allocation, nullptr);
-						res != VK_SUCCESS) {
+						res != VK_SUCCESS || !buffer || !allocation) {
 						const char* code_desc = get_vk_result_string(res);
 						LOGE("[GPUResourceBuilder<{}>] Name \"{}\" create failed, return code {} {}.", typeid(target_type).name(), create_info.name, code_desc, static_cast<int32_t>(res));
 						return nullptr;

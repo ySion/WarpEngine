@@ -89,16 +89,14 @@ set(ONCE
 	"Graphics/GPUResourceManager.h" 
 	"Graphics/GPUResourceManager.cpp" 
 
-	"Graphics/GPURenderGraph.h" 
-
 	"Graphics/GPUHelper.h" 
 	"Graphics/GPUHelper.cpp" 
 
 	"Graphics/GPUShaderCompiler.h" 
 	"Graphics/GPUShaderCompiler.cpp"
 
-	"Graphics/GPUResourceBase.h"
-	"Graphics/GPUResourceBase.cpp"
+	"Graphics/GPUResource/GPUResourceBase.h"
+	"Graphics/GPUResource/GPUResourceBase.cpp"
 
 	"Graphics/GPUResourceHandle.h" 
 
@@ -150,6 +148,9 @@ set(ONCE
 	"Graphics/GPUResource/GPUPipelineLayout.h"
 	"Graphics/GPUResource/GPUPipelineLayout.cpp"
 
+	"Graphics/GPUResource/GPUDescriptorSetLayout.h" 
+	"Graphics/GPUResource/GPUDescriptorSetLayout.cpp"
+
 	######################################################
 
 	"Graphics/Builder/GPUBufferBuilder.h"
@@ -184,9 +185,39 @@ set(ONCE
 
 	"Graphics/Builder/GPUPipelineLayoutBuilder.h"
 	"Graphics/Builder/GPUPipelineLayoutBuilder.cpp"
-)
 
-add_executable(WarpEngine ${ONCE} )
+	"Graphics/Builder/GPUDescriptorPoolBuilder.h"
+	"Graphics/Builder/GPUDescriptorPoolBuilder.cpp"
+
+	"Graphics/Builder/GPUDescriptorSetLayoutBuilder.h" 
+	"Graphics/Builder/GPUDescriptorSetLayoutBuilder.cpp"
+	
+	"Render/RenderResourceGroup.h" 
+	"Render/RenderResourceGroup.cpp" 
+
+	"Render/RenderMachineCore.h"
+	"Render/RenderMachineCore.cpp"
+
+	"Render/RenderResourceSystem.cpp"
+	"Render/RenderResourceSystem.h"
+
+	"Render/RenderTaskGraph.h" 
+	"Render/RenderTaskGraph.cpp" 
+
+	"Render/RenderTaskSystem.h" 
+	"Render/RenderTaskSystem.cpp" 
+
+	"Render/RTGResourceNodes/ResourceBase.h"
+	"Render/RTGResourceNodes/ResourceBase.h"
+
+	"Render/RTGTaskNodes/TaskNodeBase.h" 
+	"Render/RTGTaskNodes/TaskNodeBase.cpp" 
+
+	"Render/RenderSystem.h"
+	"Render/RenderSystem.cpp"
+ "Render/RenderTaskGraphDomain.h" "Render/RenderTaskGraphDomain.cpp" "Render/RenderCommandDomain.h" "Render/RenderCommandDomain.cpp")
+
+add_executable(WarpEngine ${ONCE})
 add_definitions(${LLVM_DEFINITIONS})
 
 target_include_directories(WarpEngine PRIVATE "." 

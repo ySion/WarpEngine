@@ -55,7 +55,7 @@ namespace Warp {
 					};
 
 					if (res = vkCreatePipelineLayout(GPUFactory::get_device(), &create_info.ci_layout, nullptr, &layout);
-						res != VK_SUCCESS) {
+						res != VK_SUCCESS || !layout) {
 						const char* code_desc = get_vk_result_string(res);
 						LOGE("[GPUResourceBuilder<{}>] Name \"{}\" create failed, return code {} {}.", typeid(target_type).name(), create_info.name, code_desc, static_cast<int32_t>(res));
 						return nullptr;

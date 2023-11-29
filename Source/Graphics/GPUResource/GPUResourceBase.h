@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-#include "GPUFactory.h"
+#include "Graphics/GPUFactory.h"
 #include "Core/MIStl.h"
 #include "Core/MIResource.h"
 
@@ -57,12 +57,8 @@ namespace Warp
 		private:
 			MString m_type; // if m_type is "", so this is invalid resource.
 			MString m_name; // if m_name is "", so this is a anonymous resource.
-
 			uint32_t m_index;
-
 			void* m_manager_ptr{};
-
-			MVector<MString> m_tags{};
 		};
 
 		inline void wait_device_idle() {

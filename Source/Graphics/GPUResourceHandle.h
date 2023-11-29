@@ -9,15 +9,12 @@ namespace Warp {
 			requires std::is_base_of_v<GPUResource, T>
 		class GPUResourceHandle {
 		public:
-			GPUResourceHandle() = default;
 
-			GPUResourceHandle(const T* val)  {
-				handle = val;
-			}
+			GPUResourceHandle(T* resource = nullptr) : handle(resource) {}
 			
 			~GPUResourceHandle() {
 				if (available()) {
-					static_cast<GPUResourceManager<T>*>(handle->m_manager_ptr)->erase(handle);
+					static_cast<GPUResourceManagerBase*>(handle->m_manager_ptr)->erase(handle);
 				}
 			}
 
@@ -37,11 +34,13 @@ namespace Warp {
 				return *this;
 			}
 
-			GPUResourceHandle(T* resource) : handle(resource) {}
+			template<class T2> T2* cast_to() {
+				return static_cast<T2*>(handle);
+			}
 
 			bool available() {
 				if(is_manager_available()){
-					return static_cast<GPUResourceManager<T>*>(handle->m_manager_ptr)->available(handle);
+					return static_cast<GPUResourceManagerBase*>(handle->m_manager_ptr)->available(handle);
 				}
 				return false;
 			}
@@ -58,7 +57,7 @@ namespace Warp {
 			constexpr void reset(T* ptr = nullptr, bool kill_origin = true) {
 				if (kill_origin) {
 					if(available()){
-						static_cast<GPUResourceManager<T>*>(handle->m_manager_ptr)->erase(handle);
+						static_cast<GPUResourceManagerBase*>(handle->m_manager_ptr)->erase(handle);
 					}
 					handle = ptr;
 				}
@@ -71,7 +70,7 @@ namespace Warp {
 				handle = nullptr;
 			}
 
-			constexpr T& operator->() const { return *handle; }
+			constexpr T* operator->() const { return get(); }
 
 			constexpr T& operator*() const { return *handle; }
 

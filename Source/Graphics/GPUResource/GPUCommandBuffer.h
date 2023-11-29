@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Graphics/GPUFactory.h"
-#include "Graphics/GPUResourceBase.h"
+#include "GPUResourceBase.h"
 
 #include "GPUSemaphore.h"
 #include "GPURenderPass.h"
@@ -13,10 +12,14 @@ namespace Warp {
 
 		class GPUCommandBuffer final : public GPUResource {
 		public:
-			inline GPUCommandBuffer(const MString& name) : GPUResource("commandbuffer", name) {}
+			inline GPUCommandBuffer(const MString& name) : GPUResource("command_buffer", name) {}
 
 			~GPUCommandBuffer() override {
 				vkFreeCommandBuffers(GPUFactory::get_device(), m_command_pool, 1, &m_command_buffer);
+			}
+
+			void reset_command_buffer() const {
+				vkResetCommandBuffer(m_command_buffer, 0);
 			}
 
 			VkResult begin_command_buffer(VkCommandBufferUsageFlags flags = 0) {
@@ -27,6 +30,8 @@ namespace Warp {
 					.pInheritanceInfo = nullptr
 				};
 				return vkBeginCommandBuffer(m_command_buffer, &command_begin_info);
+
+				
 			}
 
 			void end_command_buffer() const {
@@ -133,6 +138,5 @@ namespace Warp {
 			std::vector<VkSemaphore> m_semaphore_signal_to{};
 			std::vector<VkPipelineStageFlags> m_submit_stage_mask{};
 		};
-
 	}
 }

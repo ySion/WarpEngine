@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Graphics/GPUFactory.h"
-#include "Graphics/GPUResourceBase.h"
+#include "GPUResourceBase.h"
 
 namespace Warp {
 	namespace GPU {
@@ -9,7 +8,7 @@ namespace Warp {
 		class GPURenderPass;
 		class GPUGraphicsPipeline : public GPUResource {
 		public:
-			inline GPUGraphicsPipeline(const MString& name) : GPUResource("pipeline", name) {}
+			inline GPUGraphicsPipeline(const MString& name) : GPUResource("graphics_pipeline", name) {}
 
 			inline ~GPUGraphicsPipeline() override {
 				vkDestroyPipeline(GPUFactory::get_device(), m_pipeline, nullptr);
@@ -18,6 +17,7 @@ namespace Warp {
 			VkPipeline m_pipeline{};
 			GPURenderPass* m_render_pass{};
 			uint32_t m_subpass_idx{};
+			VkPipelineLayout m_pipeline_layout{};
 		};
-	}
+	};
 }

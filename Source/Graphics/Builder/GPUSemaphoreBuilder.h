@@ -36,7 +36,7 @@ namespace Warp {
 					VkSemaphore semaphore{};
 
 					if (res = vkCreateSemaphore(GPUFactory::get_device(), &create_info.ci_semaphore, nullptr, &semaphore);
-						VK_SUCCESS != res) {
+						VK_SUCCESS != res || !semaphore) {
 						const char* code_desc = get_vk_result_string(res);
 						LOGE("[GPUResourceBuilder<{}>] Name \"{}\" create failed, return code {} {}.", typeid(target_type).name(), create_info.name, code_desc, static_cast<int32_t>(res));
 						return nullptr;

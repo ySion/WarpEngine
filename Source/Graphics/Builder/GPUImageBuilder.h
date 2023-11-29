@@ -73,6 +73,22 @@ namespace Warp {
 				create_info.ci_allocation.usage = memory_usage;
 
 				create_info.aspect_mask = view_aspect_mask;
+
+				if (view_aspect_mask == 0) {
+					if (is_depth_stencil_format(format)) {
+						create_info.aspect_mask = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
+					} else {
+						create_info.aspect_mask = VK_IMAGE_ASPECT_COLOR_BIT;
+					}
+				}
+
+				if (create_info.ci_image.usage == 0) {
+					if (is_depth_stencil_format(format)) {
+						create_info.ci_image.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+					} else {
+						create_info.ci_image.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+					}
+				}
 				return *this;
 			}
 
@@ -98,7 +114,7 @@ namespace Warp {
 					.arrayLayers = 1,
 					.samples = sample_count,
 					.tiling = VK_IMAGE_TILING_OPTIMAL,
-					.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | addtion_usages,
+					.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | addtion_usages,
 					.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED
 				};
 
@@ -125,7 +141,7 @@ namespace Warp {
 					.arrayLayers = 1,
 					.samples = sample_count,
 					.tiling = VK_IMAGE_TILING_OPTIMAL,
-					.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | addtion_usages,
+					.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | addtion_usages,
 					.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED
 				};
 
@@ -148,7 +164,7 @@ namespace Warp {
 					VkImage image{};
 					VmaAllocation allocation{};
 					if (res = vmaCreateImage(GPUFactory::get_vma(), &create_info.ci_image, &create_info.ci_allocation, &image, &allocation, nullptr);
-						VK_SUCCESS != res) {
+						VK_SUCCESS != res || !image || !allocation) {
 						const char* code_desc = get_vk_result_string(res);
 						LOGE("[GPUResourceBuilder<{}>] Name \"{}\" create failed, return code {} {}.", typeid(target_type).name(), create_info.name, code_desc, static_cast<int32_t>(res));
 						return nullptr;

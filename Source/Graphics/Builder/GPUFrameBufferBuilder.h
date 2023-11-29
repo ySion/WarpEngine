@@ -84,7 +84,7 @@ namespace Warp {
 				VkResult res = VK_RESULT_MAX_ENUM;
 				try{
 					if (res = vkCreateFramebuffer(GPUFactory::get_device(), &create_info.ci_framebuffer, nullptr, &frame_buffer);
-						VK_SUCCESS != res) {
+						VK_SUCCESS != res || !frame_buffer) {
 						const char* code_desc = get_vk_result_string(res);
 						LOGE("[GPUResourceBuilder<{}>] Name \"{}\" create failed, return code {} {}.", typeid(target_type).name(), create_info.name, code_desc, static_cast<int32_t>(res));
 						return nullptr;

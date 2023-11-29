@@ -110,7 +110,7 @@ namespace Warp {
 				create_info.ci_command_buffer.commandBufferCount = 1;
 
 				if (auto res = vkAllocateCommandBuffers(GPUFactory::get_device(), &create_info.ci_command_buffer, &vk_command_buffer);
-					res != VK_SUCCESS) {
+					res != VK_SUCCESS || !vk_command_buffer) {
 					return;
 				}
 

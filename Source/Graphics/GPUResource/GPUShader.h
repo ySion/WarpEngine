@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Graphics/GPUFactory.h"
-#include "Graphics/GPUResourceBase.h"
+#include "GPUResourceBase.h"
 
 namespace Warp {
 	namespace GPU {

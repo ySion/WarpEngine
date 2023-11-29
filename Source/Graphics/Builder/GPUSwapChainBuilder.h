@@ -106,7 +106,7 @@ namespace Warp {
 				VkResult res = VK_RESULT_MAX_ENUM;
 				try {
 					if (res = vkCreateSwapchainKHR(GPUFactory::get_device(), &ci_swapchain, nullptr, &swapchain);
-						res != VK_SUCCESS) {
+						res != VK_SUCCESS || !swapchain) {
 						const char* code_desc = get_vk_result_string(res);
 						LOGC("[GPUResourceBuilder<{}>] Name \"{}\"  Recreate SwapChain failed, application crashed, error code:{} {}.", typeid(target_type).name(), old_swapchain->get_name(), code_desc, static_cast<int32_t>(res));
 						throw std::runtime_error("Recreate SwapChain failed, application crashed.");

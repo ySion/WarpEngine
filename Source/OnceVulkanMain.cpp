@@ -9,28 +9,69 @@
 
 #include "Core/Utils.h"
 #include "Core/Math.hpp"
-#include "Graphics/GPUFactory.h"
-#include "Graphics/GPUResource.h"
-#include "Graphics/GPUResourceBuilder.h"
-#include "Graphics/GPUResourceManager.h"
-#include "Graphics/GPUShaderCompiler.h"
 #include "Loaders/tiny_obj_loader.h"
 
-#include "Graphics/Builder/GPUBufferBuilder.h"
-#include "Graphics/Builder/GPUImageBuilder.h"
-#include "Graphics/Builder/GPUSwapChainBuilder.h"
-#include "Graphics/Builder/GPUFrameBufferBuilder.h"
-#include "Graphics/Builder/GPUCommandPoolBuilder.h"
-#include "Graphics/Builder/GPUCommandBufferBuilder.h"
-#include "Graphics/Builder/GPUFenceBuilder.h"
-#include "Graphics/Builder/GPUSemaphoreBuilder.h"
-#include "Graphics/Builder/GPURenderPassBuilder.h"
-#include "Graphics/Builder/GPUGraphicsPipelineBuilder.h"
-#include "Graphics/Builder/GPUPipelineLayoutBuilder.h"
+
+#include "Render/RenderSystem.h"
 
 #include "Image/image.h"
 
 #include "lmdb.h"
+
+int main()
+{
+
+	Warp::GPU::GPUFactoryCreateInfo create_info{
+		{
+			"VK_KHR_surface",
+			"VK_KHR_win32_surface"
+		},
+		{
+			"VK_LAYER_KHRONOS_validation"
+		},
+		{
+			"VK_KHR_swapchain",
+			"VK_KHR_get_memory_requirements2",
+			"VK_KHR_dedicated_allocation",
+			"VK_KHR_bind_memory2"
+		}
+	};
+	Warp::GPU::GPUFactory::init(create_info);
+	{
+		Warp::Render::RenderSystem rendersystem{};
+
+		const auto render_graph = rendersystem.make_render_task_graph_domain("test", { 1920,1080 });
+		const auto cmd_domain = rendersystem.make_command_domain("coreCMD");
+
+		if(!cmd_domain)
+		{
+			LOG("Error!!!!!!!!!!!!");
+		}else
+		{
+
+		}
+
+		if(!render_graph){
+			LOG("Error!!!!!!!!!!!!");
+		}else {
+
+			const auto success = render_graph->add_image_node("image_1", "format_r8g8b8a8_srgb")
+				.add_task_node("one_make_triangle", "TaskNode_1", { 0 })
+				.compile();
+
+			if (success) {
+				LOG("Succes!!!!!!!!!!!!");
+
+				auto find_res = render_graph->get_gpu_image("image_1", 0);
+				if(find_res){
+					LOG("find image: {}, {}x{}.", find_res->get_name(), find_res->m_extent.width, find_res->m_extent.height);
+				}
+			}
+		}
+	}
+
+	Warp::GPU::GPUFactory::exit();
+}
 
 int main1() {
 
@@ -83,7 +124,7 @@ int main1() {
 	return 0;
 }
 
-int main() {
+int main3() {
 
 	Warp::GPU::GPUFactoryCreateInfo create_info{
 		{
@@ -142,8 +183,27 @@ int main() {
 	const auto buffer_manager =
 		Warp::GPU::GPUFactory::make_manager<Warp::GPU::GPUResourceTypes::GPUBuffer>("buffer_manager 0");
 
+	const auto descpool_manager =
+		Warp::GPU::GPUFactory::make_manager<Warp::GPU::GPUResourceTypes::GPUDescriptorPool>("descpool_manager 0");
+
+	const auto desc_layout_manager =
+		Warp::GPU::GPUFactory::make_manager<Warp::GPU::GPUResourceTypes::GPUDescriptorSetLayout>("desclayout_manager 0");
+
 	auto swap1 = swap_chain_manager->builder("hello")
 		.set_configs({ 800, 600 }, "hello world", SDL_WINDOW_RESIZABLE).make();
+
+	auto one_layout = desc_layout_manager->builder("test_layout").
+	add_descriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VkShaderStageFlagBits::VK_SHADER_STAGE_VERTEX_BIT).make();
+
+	auto one_desc_pool = descpool_manager->builder("test_desc_pool")
+	.add_pool_size_info(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1)
+	.add_pool_size_info(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1)
+	.make();
+
+	auto one_set =  one_desc_pool->make_descriptor_set(one_layout);
+
+
+	
 
 	const auto renderpass = renderpass_manager->builder("main_renderpass")
 		.add_attachment(VK_FORMAT_B8G8R8A8_SRGB, VK_SAMPLE_COUNT_8_BIT, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
@@ -175,13 +235,24 @@ int main() {
 
 	auto cmd_buffer = command_buffer_manager->builder("main_command_buffer").set_configs(pool).make_multi(command_frame_buffer_count);
 
-	auto layout = layout_manager->builder().make();
 
-	//auto vert_sh = shader_manager->builder("shader_1").make_from_file("../../../Shader/shader.vert", EShLangVertex);
-	//auto frag_sh = shader_manager->builder("shader_2").make_from_file("../../../Shader/shader.frag", EShLangFragment);
+	struct MeshPushConstants {
+		glm::vec4 color1{ 0.1, 0.5, 1.0f, 1.0 };
+		glm::vec4 color2;
+		glm::vec4 color3;
+		glm::vec4 color4;
+	};
+	auto layout = layout_manager->builder().add_push_constant({
+		.stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
+		.offset = 0,
+		.size = sizeof(MeshPushConstants)
+	}).make();
 
-	auto vert_sh = shader_manager->builder("shader_1").make_from_file("shader.vert", EShLangVertex);
-	auto frag_sh = shader_manager->builder("shader_2").make_from_file("shader.frag", EShLangFragment);
+	auto vert_sh = shader_manager->builder("shader_1").make_from_file("../../../Shader/shader.vert", EShLangVertex);
+	auto frag_sh = shader_manager->builder("shader_2").make_from_file("../../../Shader/shader.frag", EShLangFragment);
+
+	//auto vert_sh = shader_manager->builder("shader_1").make_from_file("shader.vert", EShLangVertex);
+	//auto frag_sh = shader_manager->builder("shader_2").make_from_file("shader.frag", EShLangFragment);
 
 
 	if (!vert_sh || !frag_sh) {
@@ -242,6 +313,8 @@ int main() {
 
 	uint32_t cmd_idx = 0;
 	bool is_frame = false;
+
+	MeshPushConstants hello_data{};
 	auto record_commands =
 		[&](Warp::GPU::GPUCommandBuffer* cmdbuf, Warp::GPU::GPUFrameBuffer* framebuf,
 		Warp::GPU::GPUSemaphore* wait_for, Warp::GPU::GPUSemaphore* render_ok, Warp::GPU::GPUFence* cmdbuf_submit_success_fence) {
@@ -268,7 +341,6 @@ int main() {
 			} else {
 				cmdbuf->bind_graphics_pipeline(pipeline_frame);
 			}
-
 			cmdbuf->set_viewports({ VkViewport {
 				.x = 0.0f,
 				.y = 0.0f,
@@ -282,6 +354,9 @@ int main() {
 				.offset = {0, 0},
 				.extent = framebuf->m_extent
 			} });
+
+			vkCmdPushConstants(cmdbuf->m_command_buffer, pipeline->m_pipeline_layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants), &hello_data);
+
 
 			cmdbuf->draw(3, 1, 0, 0);
 

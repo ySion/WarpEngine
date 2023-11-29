@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Graphics/GPUResourceBase.h"
-#include "Graphics/GPUFactory.h"
+#include "GPUResourceBase.h"
+
 #include "GPUGraphicsPipeline.h"
 
 #include "Graphics/GPUResourceHandle.h"
@@ -10,7 +10,7 @@ namespace Warp {
 	namespace GPU {
 		class GPURenderPass : public GPUResource {
 		public:
-			inline GPURenderPass(const MString& name) : GPUResource("renderpass", name) {}
+			inline GPURenderPass(const MString& name) : GPUResource("render_pass", name) {}
 
 			inline ~GPURenderPass() override {
 				vkDestroyRenderPass(GPUFactory::get_device(), m_render_pass, nullptr);
