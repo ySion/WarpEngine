@@ -218,14 +218,13 @@ namespace Warp {
 						return nullptr;
 					}
 
-					std::unique_ptr<GPURenderPass> obj_ptr = std::make_unique<GPURenderPass>(create_info.name);
+					const auto obj = new target_type(create_info.name);
 
-					obj_ptr->m_render_pass = render_pass;
-					obj_ptr->m_attachment_descriptions = MVector<VkAttachmentDescription>(create_info.attachment_descriptions.begin(), create_info.attachment_descriptions.end());
+					obj->m_render_pass = render_pass;
+					obj->m_attachment_descriptions = MVector<VkAttachmentDescription>(create_info.attachment_descriptions.begin(), create_info.attachment_descriptions.end());
 
-					const auto temp_ptr = obj_ptr.get();
-					m_manager->add(std::move(obj_ptr));
-					return temp_ptr;
+					m_manager->add(obj);
+					return obj;
 
 				} catch (...) {
 					const char* code_desc = get_vk_result_string(res);

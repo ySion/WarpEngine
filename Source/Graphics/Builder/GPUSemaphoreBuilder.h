@@ -42,13 +42,12 @@ namespace Warp {
 						return nullptr;
 					}
 
-					std::unique_ptr<GPUSemaphore> obj_ptr = std::make_unique<GPUSemaphore>(create_info.name);
+					const auto obj = new target_type(create_info.name);
 
-					obj_ptr->m_semaphore = semaphore;
+					obj->m_semaphore = semaphore;
 
-					const auto temp_ptr = obj_ptr.get();
-					m_manager->add(std::move(obj_ptr));
-					return temp_ptr;
+					m_manager->add(obj);
+					return obj;
 				} catch (...) {
 					const char* code_desc = get_vk_result_string(res);
 					LOGE("[GPUResourceBuilder<{}>] Name \"{}\" create failed, return code {} {}.", typeid(target_type).name(), create_info.name, code_desc, static_cast<int32_t>(res));

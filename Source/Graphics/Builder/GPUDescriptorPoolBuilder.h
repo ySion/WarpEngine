@@ -64,16 +64,15 @@ namespace Warp {
 						return nullptr;
 					}
 
-					std::unique_ptr<target_type> obj = std::make_unique<target_type>(create_info.name);
+					const auto obj = new target_type(create_info.name);
 
 					obj->m_pool = pool;
 					obj->m_max_sets = create_info.ci_pool.maxSets;
 					obj->m_flags = create_info.ci_pool.flags;
 					obj->m_pool_sizes = create_info.pool_sizes;
 
-					const auto temp_ptr = obj.get();
-					m_manager->add(std::move(obj));
-					return temp_ptr;
+					m_manager->add(obj);
+					return obj;
 
 				} catch (...) {
 					const char* code_desc = get_vk_result_string(res);

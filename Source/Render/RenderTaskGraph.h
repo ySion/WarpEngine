@@ -391,11 +391,23 @@ namespace Warp::Render {
 			return m_render_system;
 		}
 
-		inline void generate_commands(GPU::GPUCommandBuffer* commandbuf)
+		inline void generate_commands()
 		{
-			for (auto& t : m_task_nodes_handles) {
-				t->generate_commands(commandbuf);
+			if(!m_cmd_buffer) {
+				LOGE("[RenderTaskGraph] \"{}\" generate commands failed, command buffer is nullptr", m_name);
+				return;
 			}
+
+			m_cmd_buffer->begin_command_buffer();
+
+			for (auto& t : m_task_nodes_handles) {
+				t->generate_commands(m_cmd_buffer);
+			}
+			m_cmd_buffer->end_command_buffer();
+		}
+
+		inline void bind_command_buffer(GPU::GPUCommandBuffer* commandbuf) {
+			m_cmd_buffer = commandbuf;
 		}
 
 	private:
@@ -432,6 +444,8 @@ namespace Warp::Render {
 		MVector<GPU::GPUResourceHandle<GPU::GPUBuffer>> m_buffers{};
 
 		MVector<std::unique_ptr<TaskNodeBase>> m_task_nodes_handles{};
+
+		GPU::GPUCommandBuffer* m_cmd_buffer{};
 
 		RenderTaskGraph* m_previous_frame_graph{ nullptr };
 	};

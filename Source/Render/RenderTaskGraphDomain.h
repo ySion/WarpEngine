@@ -50,9 +50,15 @@ namespace Warp::Render {
 
 	private:
 		MString m_name{};
+
 		VkExtent2D m_resource_static_resolution{};
+
 		MVector<GPU::GPUCommandBuffer*> m_command_buffers{};
+
 		MVector<std::unique_ptr<RenderTaskGraph>> m_render_task_graphs{};
+
 		RenderSystem* m_render_system{ nullptr };
+
+		GPU::GPUResourceHandle<GPU::GPUCommandPool> m_command_pool{};
 	};
 }

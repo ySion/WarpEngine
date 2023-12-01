@@ -76,6 +76,7 @@ namespace Warp {
 
 			constexpr operator bool() const { return handle != nullptr; }
 
+			constexpr bool operator!() const { return handle == nullptr; }
 		private:
 			T* handle;
 		};

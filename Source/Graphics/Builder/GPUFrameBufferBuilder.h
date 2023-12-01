@@ -90,19 +90,18 @@ namespace Warp {
 						return nullptr;
 					}
 
-					std::unique_ptr<target_type> obj_ptr = std::make_unique<target_type>(create_info.name);
+					const auto obj = new target_type(create_info.name);
 
-					obj_ptr->m_framebuffer = frame_buffer;
-					obj_ptr->m_extent = { create_info.ci_framebuffer.width, create_info.ci_framebuffer.height };
-					obj_ptr->m_layers = create_info.ci_framebuffer.layers;
+					obj->m_framebuffer = frame_buffer;
+					obj->m_extent = { create_info.ci_framebuffer.width, create_info.ci_framebuffer.height };
+					obj->m_layers = create_info.ci_framebuffer.layers;
 
 					for (int i = 0; i < create_info.views.size(); i++) {
-						obj_ptr->m_attachments_view.push_back(create_info.views[i]);
+						obj->m_attachments_view.push_back(create_info.views[i]);
 					}
 
-					const auto temp_ptr = obj_ptr.get();
-					m_manager->add(std::move(obj_ptr));
-					return temp_ptr;
+					m_manager->add(obj);
+					return obj;
 
 				} catch (...) {
 					const char* code_desc = get_vk_result_string(res);

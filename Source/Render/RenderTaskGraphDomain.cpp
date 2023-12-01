@@ -13,8 +13,10 @@ Warp::Render::RenderTaskGraphDomain::RenderTaskGraphDomain(const MString& name, 
 		m_render_task_graphs.emplace_back(std::move(temp_ptr));
 	}
 
+	const auto pool = render_system->get_command_pool();
 	for(int i = 0; i < 3; ++i) {
 		m_render_task_graphs[i]->set_previous_frame_graph(m_render_task_graphs[(i + 1) % 3].get());
+		m_render_task_graphs[i]->bind_command_buffer(pool->m_command_buffers[i].get());
 	}
 }
 

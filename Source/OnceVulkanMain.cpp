@@ -18,8 +18,7 @@
 
 #include "lmdb.h"
 
-int main()
-{
+int main3() {
 
 	Warp::GPU::GPUFactoryCreateInfo create_info{
 		{
@@ -36,38 +35,16 @@ int main()
 			"VK_KHR_bind_memory2"
 		}
 	};
+
 	Warp::GPU::GPUFactory::init(create_info);
 	{
 		Warp::Render::RenderSystem rendersystem{};
 
 		const auto render_graph = rendersystem.make_render_task_graph_domain("test", { 1920,1080 });
-		const auto cmd_domain = rendersystem.make_command_domain("coreCMD");
 
-		if(!cmd_domain)
-		{
-			LOG("Error!!!!!!!!!!!!");
-		}else
-		{
-
-		}
-
-		if(!render_graph){
-			LOG("Error!!!!!!!!!!!!");
-		}else {
-
-			const auto success = render_graph->add_image_node("image_1", "format_r8g8b8a8_srgb")
-				.add_task_node("one_make_triangle", "TaskNode_1", { 0 })
-				.compile();
-
-			if (success) {
-				LOG("Succes!!!!!!!!!!!!");
-
-				auto find_res = render_graph->get_gpu_image("image_1", 0);
-				if(find_res){
-					LOG("find image: {}, {}x{}.", find_res->get_name(), find_res->m_extent.width, find_res->m_extent.height);
-				}
-			}
-		}
+		const auto success = render_graph->add_image_node("image_1", "format_r8g8b8a8_srgb")
+			.add_task_node("one_make_triangle", "TaskNode_1", { 0 })
+			.compile();
 	}
 
 	Warp::GPU::GPUFactory::exit();
@@ -124,7 +101,7 @@ int main1() {
 	return 0;
 }
 
-int main3() {
+int main() {
 
 	Warp::GPU::GPUFactoryCreateInfo create_info{
 		{
@@ -155,9 +132,6 @@ int main3() {
 
 	const auto command_pool_manager =
 		Warp::GPU::GPUFactory::make_manager<Warp::GPU::GPUResourceTypes::GPUCommandPool>("command_pool_manager 0");
-
-	const auto command_buffer_manager =
-		Warp::GPU::GPUFactory::make_manager<Warp::GPU::GPUResourceTypes::GPUCommandBuffer>("command_buffer_manager 0");
 
 	const auto layout_manager =
 		Warp::GPU::GPUFactory::make_manager<Warp::GPU::GPUResourceTypes::GPUPipelineLayout>("pipeline_layout_manager 0");
@@ -202,9 +176,6 @@ int main3() {
 
 	auto one_set =  one_desc_pool->make_descriptor_set(one_layout);
 
-
-	
-
 	const auto renderpass = renderpass_manager->builder("main_renderpass")
 		.add_attachment(VK_FORMAT_B8G8R8A8_SRGB, VK_SAMPLE_COUNT_8_BIT, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
 		.add_attachment(VK_FORMAT_B8G8R8A8_SRGB, VK_SAMPLE_COUNT_1_BIT, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR)
@@ -233,7 +204,11 @@ int main3() {
 
 	auto pool = command_pool_manager->builder("main_command_pool").set_configs(VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT).make();
 
-	auto cmd_buffer = command_buffer_manager->builder("main_command_buffer").set_configs(pool).make_multi(command_frame_buffer_count);
+	MVector<Warp::GPU::GPUCommandBuffer*> cmd_buffer{};
+	for(int i = 0; i < 3; ++i) {
+		auto temp = pool->make_command_buffer();
+		cmd_buffer.push_back(temp);
+	}
 
 
 	struct MeshPushConstants {
@@ -341,19 +316,23 @@ int main3() {
 			} else {
 				cmdbuf->bind_graphics_pipeline(pipeline_frame);
 			}
-			cmdbuf->set_viewports({ VkViewport {
+
+			VkViewport view_ports[] = { {
 				.x = 0.0f,
 				.y = 0.0f,
-				.width = framebuf->m_extent.width * 1.0f,
-				.height = framebuf->m_extent.height * 1.0f,
+				.width = static_cast<float>(framebuf->m_extent.width),
+				.height = static_cast<float>(framebuf->m_extent.height),
 				.minDepth = 0.0f,
 				.maxDepth = 1.0f
-			} });
+			} };
+			cmdbuf->set_viewports(view_ports);
 
-			cmdbuf->set_scissors({ VkRect2D {
-				.offset = {0, 0},
-				.extent = framebuf->m_extent
-			} });
+			VkRect2D scissors[] = { {
+				.offset = {0,0},
+				.extent = {framebuf->m_extent.width, framebuf->m_extent.height}
+			} };
+
+			cmdbuf->set_scissors(scissors);
 
 			vkCmdPushConstants(cmdbuf->m_command_buffer, pipeline->m_pipeline_layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants), &hello_data);
 
@@ -373,7 +352,7 @@ int main3() {
 		SDL_PollEvent(&s_event);
 		if (s_event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED) {
 			auto ptr = SDL_GetWindowFromID(s_event.window.windowID);
-			if (auto res = swap_chain_manager->searcher().find_by_window_ptr(ptr)) {
+			if (auto res = swap_chain_manager->searcher()->find_by_window_ptr(ptr)) {
 				Warp::GPU::wait_device_idle();
 				frame_buffer_manager->clear();
 				swap_chain_manager->erase(res.value());
@@ -383,7 +362,7 @@ int main3() {
 			}
 		}if (s_event.type == SDL_EVENT_WINDOW_RESIZED) {
 			auto ptr = SDL_GetWindowFromID(s_event.window.windowID);
-			if (auto res = swap_chain_manager->searcher().find_by_window_ptr(ptr)) {
+			if (auto res = swap_chain_manager->searcher()->find_by_window_ptr(ptr)) {
 				auto& obj_ptr = *res.value();
 				Warp::GPU::wait_device_idle();
 				swap_chain_manager->builder().make_resize_only(&obj_ptr);

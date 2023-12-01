@@ -136,8 +136,8 @@ set(ONCE
 	"Graphics/GPUResource/GPUCommandPool.h"
 	"Graphics/GPUResource/GPUCommandPool.cpp"
 
-	"Graphics/GPUResource/GPUCommandBuffer.h"
-	"Graphics/GPUResource/GPUCommandBuffer.cpp"
+	
+	
 
 	"Graphics/GPUResource/GPUShader.h" 
 	"Graphics/GPUResource/GPUShader.cpp"
@@ -168,8 +168,8 @@ set(ONCE
 	"Graphics/Builder/GPUCommandPoolBuilder.h"
 	"Graphics/Builder/GPUCommandPoolBuilder.cpp"
 
-	"Graphics/Builder/GPUCommandBufferBuilder.h"
-	"Graphics/Builder/GPUCommandBufferBuilder.cpp"
+	
+	
 
 	"Graphics/Builder/GPUFenceBuilder.h" 
 	"Graphics/Builder/GPUFenceBuilder.cpp" 
@@ -215,7 +215,13 @@ set(ONCE
 
 	"Render/RenderSystem.h"
 	"Render/RenderSystem.cpp"
- "Render/RenderTaskGraphDomain.h" "Render/RenderTaskGraphDomain.cpp" "Render/RenderCommandDomain.h" "Render/RenderCommandDomain.cpp")
+ 	"Render/RenderTaskGraphDomain.h" 
+	"Render/RenderTaskGraphDomain.cpp"  
+	
+	"Render/RenderShaderSystem.h"
+	"Render/RenderShaderSystem.cpp"
+
+)
 
 add_executable(WarpEngine ${ONCE})
 add_definitions(${LLVM_DEFINITIONS})

@@ -32,8 +32,6 @@ namespace Warp::Render {
 
 			m_command_pool_mag = std::make_unique<GPU::GPUResourceManager<GPU::GPUResourceTypes::GPUCommandPool>>("core_command_pool_manager");
 
-			m_command_buffer_mag = std::make_unique<GPU::GPUResourceManager<GPU::GPUResourceTypes::GPUCommandBuffer>>("core_command_buffer_manager");
-
 			m_buffer_mag = std::make_unique<GPU::GPUResourceManager<GPU::GPUResourceTypes::GPUBuffer>>("core_buffer_manager"); 
 
 			m_image_mag = std::make_unique<GPU::GPUResourceManager<GPU::GPUResourceTypes::GPUImage>>("core_image_manager");
@@ -84,10 +82,6 @@ namespace Warp::Render {
 			return m_command_pool_mag.get();
 		}
 
-		inline GPU::GPUResourceManager<GPU::GPUResourceTypes::GPUCommandBuffer>* get_command_buffer_manager() const {
-			return m_command_buffer_mag.get();
-		}
-
 		inline GPU::GPUResourceManager<GPU::GPUResourceTypes::GPUBuffer>* get_buffer_manager() const {
 			return m_buffer_mag.get();
 		}
@@ -125,8 +119,6 @@ namespace Warp::Render {
 		std::unique_ptr<GPU::GPUResourceManager<GPU::GPUResourceTypes::GPUSemaphore>> m_semahpore_mag;
 
 		std::unique_ptr<GPU::GPUResourceManager<GPU::GPUResourceTypes::GPUCommandPool>> m_command_pool_mag;
-
-		std::unique_ptr<GPU::GPUResourceManager<GPU::GPUResourceTypes::GPUCommandBuffer>> m_command_buffer_mag;
 
 
 

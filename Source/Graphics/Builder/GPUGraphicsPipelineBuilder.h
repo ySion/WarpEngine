@@ -393,16 +393,16 @@ namespace Warp {
 						return nullptr;
 					}
 
-					std::unique_ptr<GPUGraphicsPipeline> obj_ptr = std::make_unique<GPUGraphicsPipeline>(create_info.name);
-					auto temp_ptr = obj_ptr.get();
-					obj_ptr->m_render_pass = create_info.render_pass;
-					obj_ptr->m_subpass_idx = create_info.subpass_idx;
-					obj_ptr->m_pipeline = pipeline;
-					obj_ptr->m_pipeline_layout = create_info.layout->m_layout;
+					const auto obj = new target_type(create_info.name);
 
-					create_info.render_pass->m_pipelines.emplace_back(temp_ptr);
-					m_manager->add(std::move(obj_ptr));
-					return temp_ptr;
+					obj->m_render_pass = create_info.render_pass;
+					obj->m_subpass_idx = create_info.subpass_idx;
+					obj->m_pipeline = pipeline;
+					obj->m_pipeline_layout = create_info.layout->m_layout;
+
+					create_info.render_pass->m_pipelines.emplace_back(obj);
+					m_manager->add(obj);
+					return obj;
 				} catch (...) {
 					const char* code_desc = get_vk_result_string(res);
 					LOGE("[GPUResourceBuilder<{}>] Name \"{}\" create failed, return code {} {}.", typeid(target_type).name(), create_info.name, code_desc, static_cast<int32_t>(res));

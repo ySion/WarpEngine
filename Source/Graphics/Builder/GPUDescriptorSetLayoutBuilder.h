@@ -68,13 +68,12 @@ namespace Warp {
 						return nullptr;
 					}
 
-					std::unique_ptr<target_type> obj = std::make_unique<target_type>(create_info.name);
+					const auto obj = new target_type(create_info.name);
 
 					obj->m_layout = layout;
 
-					const auto temp_ptr = obj.get();
-					m_manager->add(std::move(obj));
-					return temp_ptr;
+					m_manager->add(obj);
+					return obj;
 				} catch (...) {
 					const char* code_desc = get_vk_result_string(res);
 					LOGE("[GPUResourceBuilder<{}>] Name \"{}\" create failed, return code {} {}.", typeid(target_type).name(), create_info.name, code_desc, static_cast<int32_t>(res));

@@ -3,7 +3,6 @@
 namespace Warp::Render {
 
 	class RenderTaskSystem {
-
 	public:
 
 	};

@@ -11,7 +11,7 @@ namespace Warp::Render {
 	public:
 		inline TaskNodeBase(RenderTaskGraph* render_system,
 			const MVector<GPU::GPUImage*>& ref_images,
-			const MVector<GPU::GPUBuffer*>& ref_buffers) :m_ref_images(ref_images), m_ref_buffers(ref_buffers), m_render_system(render_system){}
+			const MVector<GPU::GPUBuffer*>& ref_buffers) :m_ref_images(ref_images), m_ref_buffers(ref_buffers), m_render_task_graph(render_system){}
 		TaskNodeBase(const TaskNodeBase&) = delete;
 		TaskNodeBase(TaskNodeBase&&) = delete;
 		TaskNodeBase& operator=(const TaskNodeBase&) = delete;
@@ -23,9 +23,10 @@ namespace Warp::Render {
 
 		MVector<GPU::GPUImage*> m_ref_images{};
 		MVector<GPU::GPUBuffer*> m_ref_buffers{};
-		GPU::GPUResourceHandle<GPU::GPUFrameBuffer> m_frame_buffer{};
+		RenderTaskGraph* m_render_task_graph{};
+
 		GPU::GPURenderPass* m_render_pass{};
-		RenderTaskGraph* m_render_system{};
+		GPU::GPUResourceHandle<GPU::GPUFrameBuffer> m_frame_buffer{};
 	};
 
 
@@ -44,9 +45,7 @@ namespace Warp::Render {
 
 		bool prepare() override;
 
-		void generate_commands(GPU::GPUCommandBuffer* commandbuf) override {
-
-		}
+		void generate_commands(GPU::GPUCommandBuffer* commandbuf) override;
 	};
 
 	struct RenderTaTaskNodeNameMapper {

@@ -170,7 +170,7 @@ namespace Warp {
 						return nullptr;
 					}
 
-					auto obj = std::make_unique<target_type>(create_info.name);
+					const auto obj = new target_type(create_info.name);
 
 					obj->m_image = image;
 					obj->m_extent = create_info.ci_image.extent;
@@ -210,9 +210,8 @@ namespace Warp {
 
 					obj->add_view(ci_view);
 
-					const auto temp_ptr = obj.get();
-					m_manager->add(std::move(obj));
-					return temp_ptr;
+					m_manager->add(obj);
+					return obj;
 
 				} catch (...) {
 					const char* code_desc = get_vk_result_string(res);

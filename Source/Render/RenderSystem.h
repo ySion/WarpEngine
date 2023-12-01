@@ -2,7 +2,6 @@
 
 #include "RenderResourceGroup.h"
 #include "RenderTaskGraphDomain.h"
-#include "RenderCommandDomain.h"
 
 namespace Warp::Render {
 
@@ -24,19 +23,24 @@ namespace Warp::Render {
 
 		void remove_render_task_graph_domain(const MString& name);
 
-		RenderCommandDomain* make_command_domain(const MString& name);
-
-		void remove_command_domain(const MString& name);
-
 		inline RenderResourceGroup* get_render_resource_group() const { return m_render_resource_group.get(); }
 
+		inline GPU::GPUCommandBuffer* acquire_command_buffer() const {
+			return m_cmd_pool->m_command_buffers[m_current_frame_index].get();
+		}
+
+		inline GPU::GPUCommandPool* get_command_pool() const {
+			return m_cmd_pool.get();
+		}
 
 	private:
 		std::unique_ptr<RenderResourceGroup> m_render_resource_group{};
 
 		MMap<MString, std::unique_ptr<RenderTaskGraphDomain>> m_render_task_graph_domains{};
 
-		MMap<MString, std::unique_ptr<RenderCommandDomain>> m_command_domain{};
+		uint32_t m_current_frame_index{ 0 };
+
+		GPU::GPUResourceHandle<GPU::GPUCommandPool> m_cmd_pool{};
 
 		friend class RenderTaskGraph;
 	};

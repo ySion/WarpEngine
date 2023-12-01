@@ -212,8 +212,6 @@ namespace Warp {
 						return nullptr;
 					}
 
-					std::unique_ptr<target_type> obj = std::make_unique<target_type>(create_info.name);
-
 					//Get images and create views
 					uint32_t image_count = 0;
 					vkGetSwapchainImagesKHR(GPUFactory::get_device(), swapchain, &image_count, nullptr);
@@ -241,6 +239,8 @@ namespace Warp {
 						vkCreateImageView(GPUFactory::get_device(), &image_view_create_info, nullptr, &vk_image_views[i]);
 					}
 
+					const auto obj = new target_type(create_info.name);
+
 					obj->m_window = window;
 					obj->m_surface = surface;
 					obj->m_swap_chain = swapchain;
@@ -254,9 +254,8 @@ namespace Warp {
 					obj->m_image_view = std::move(vk_image_views);
 
 					//Add
-					const auto temp_ptr = obj.get();
-					m_manager->add(std::move(obj));
-					return temp_ptr;
+					m_manager->add(obj);
+					return obj;
 				} catch (...) {
 					const char* code_desc = get_vk_result_string(res);
 					LOGE("[GPUResourceBuilder<{}>] Name \"{}\" create failed, return code {} {}.", typeid(target_type).name(), create_info.name, code_desc, static_cast<int32_t>(res));

@@ -19,7 +19,6 @@
 #include "Graphics/Builder/GPUSwapChainBuilder.h"
 #include "Graphics/Builder/GPUFrameBufferBuilder.h"
 #include "Graphics/Builder/GPUCommandPoolBuilder.h"
-#include "Graphics/Builder/GPUCommandBufferBuilder.h"
 #include "Graphics/Builder/GPUFenceBuilder.h"
 #include "Graphics/Builder/GPUSemaphoreBuilder.h"
 #include "Graphics/Builder/GPURenderPassBuilder.h"
@@ -38,7 +37,6 @@ namespace Warp {
 			using GPUImage = ::Warp::GPU::GPUImage;
 			using GPUSwapChain = ::Warp::GPU::GPUSwapChain;
 			using GPUCommandPool = ::Warp::GPU::GPUCommandPool;
-			using GPUCommandBuffer = ::Warp::GPU::GPUCommandBuffer;
 			using GPUFence = ::Warp::GPU::GPUFence;
 			using GPUSemaphore = ::Warp::GPU::GPUSemaphore;
 			using GPURenderPass = ::Warp::GPU::GPURenderPass;
@@ -93,16 +91,11 @@ namespace Warp {
 
 			//always replaced
 			GPUShader* make_from_string(const MString& codes, EShLanguage stage) {
-				if (create_info.m_name.empty()) {
-					return nullptr;
-				}
+				if (create_info.m_name.empty()) { return nullptr; }
 
-				if (codes.empty()) {
-					return nullptr;
-				}
+				if (codes.empty()) { return nullptr; }
 
-				std::unique_ptr<GPUShader> obj_ptr = std::make_unique<GPUShader>(create_info.m_name);
-
+				
 				MVector<uint32_t> spirv{};
 				const MString errs = ShaderCompiler::compile_shader_from_string(create_info.m_name, codes, stage, spirv);
 				if(!errs.empty())
@@ -129,15 +122,15 @@ namespace Warp {
 					LOGE("[GPUResourceBuilder<{}>] Create shader module failed.", typeid(GPUShader).name());
 					return nullptr;
 				}
+				const auto obj = new GPUShader(create_info.m_name);
 
-				obj_ptr->m_code = codes;
-				obj_ptr->m_stage = stage;
-				obj_ptr->m_spirv = MVector<uint32_t>(spirv.begin(), spirv.end());
-				obj_ptr->m_module = shader_module;
+				obj->m_code = codes;
+				obj->m_stage = stage;
+				obj->m_spirv = MVector<uint32_t>(spirv.begin(), spirv.end());
+				obj->m_module = shader_module;
 
-				const auto temp_ptr = obj_ptr.get();
-				m_manager->add(std::move(obj_ptr));
-				return temp_ptr;
+				m_manager->add(obj);
+				return obj;
 			}
 
 		private:
