@@ -50,7 +50,31 @@ int main3() {
 	Warp::GPU::GPUFactory::exit();
 }
 
+
+class Base {
+public:
+	virtual void func() = 0;
+
+	virtual ~Base() = default;
+};
+
+
+class Son : public Base {
+public:
+	Son() = default;
+
+	void func() override {
+		println("What?");
+	}
+};
+
+
 int main1() {
+
+	Base* hello = new Son();
+	hello->func();
+
+
 
 	MDB_env* db{};
 	mdb_env_create(&db);
@@ -101,7 +125,7 @@ int main1() {
 	return 0;
 }
 
-int main() {
+int main2() {
 
 	Warp::GPU::GPUFactoryCreateInfo create_info{
 		{
@@ -272,7 +296,7 @@ int main() {
 		frame_buffers.clear();
 
 		msaa_img = image_manager->builder("msaa_img")
-			.template_color_2D({ swap1->m_extent.width, swap1->m_extent.height }, VK_FORMAT_B8G8R8A8_SRGB, VK_SAMPLE_COUNT_8_BIT)
+			.template_color_2D({ swap1->m_extent.width, swap1->m_extent.height }, VK_FORMAT_R8G8B8A8_SRGB, VK_SAMPLE_COUNT_8_BIT)
 			.make(true);
 
 		for (size_t i = 0; i < max_swap_image; i++) {
@@ -387,10 +411,24 @@ int main() {
 	return 0;
 }
 
-int main2() {
+int main() {
 
+	struct objInfo {
+		glm::mat4 V;
+		glm::mat4 P;
+
+	};
 	uint32_t width = 1280, height = 720;
 	VkSampleCountFlagBits multisample_setting = VK_SAMPLE_COUNT_8_BIT;
+
+
+	objInfo OBJ_INFO{};
+
+	OBJ_INFO.V = glm::lookAt(glm::vec3(0.0f, 3.0f, 3.0f),
+				glm::vec3(0.0f, 0.0f, 0.0f),
+				glm::vec3(0.0, -1.0f, 0.0f));
+	OBJ_INFO.P = glm::perspective(glm::radians(65.0f), (float)width / height, 0.1f, 1000.0f);
+
 
 	volkInitialize();
 	glslang::InitializeProcess();
@@ -480,8 +518,52 @@ int main2() {
 		"VK_KHR_bind_memory2"
 	};
 
+	VkPhysicalDeviceVulkan11Features shader_features{
+		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES,
+		.pNext = nullptr,
+		.storageBuffer16BitAccess = false,
+		.uniformAndStorageBuffer16BitAccess = false,
+		.storagePushConstant16 = false,
+		.storageInputOutput16 = false,
+		.multiview = false,
+		.multiviewGeometryShader = false,
+		.multiviewTessellationShader = false,
+		.variablePointersStorageBuffer = false,
+		.variablePointers = false,
+		.protectedMemory = false,
+		.samplerYcbcrConversion = false,
+		.shaderDrawParameters = true
+	};
+
+	VkPhysicalDeviceDescriptorIndexingFeatures desc_features {
+		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES,
+		.pNext = &shader_features,
+		.shaderInputAttachmentArrayDynamicIndexing = true,
+		.shaderUniformTexelBufferArrayDynamicIndexing = true,
+		.shaderStorageTexelBufferArrayDynamicIndexing = true,
+		.shaderUniformBufferArrayNonUniformIndexing = true,
+		.shaderSampledImageArrayNonUniformIndexing = true,
+		.shaderStorageBufferArrayNonUniformIndexing = true,
+		.shaderStorageImageArrayNonUniformIndexing = true,
+		.shaderInputAttachmentArrayNonUniformIndexing = true,
+		.shaderUniformTexelBufferArrayNonUniformIndexing = true,
+		.shaderStorageTexelBufferArrayNonUniformIndexing = true,
+		.descriptorBindingUniformBufferUpdateAfterBind = true,
+		.descriptorBindingSampledImageUpdateAfterBind = true,
+		.descriptorBindingStorageImageUpdateAfterBind = true,
+		.descriptorBindingStorageBufferUpdateAfterBind = true,
+		.descriptorBindingUniformTexelBufferUpdateAfterBind = true,
+		.descriptorBindingStorageTexelBufferUpdateAfterBind = true,
+		.descriptorBindingUpdateUnusedWhilePending = true,
+		.descriptorBindingPartiallyBound = true,
+		.descriptorBindingVariableDescriptorCount = true,
+		.runtimeDescriptorArray = true
+	};
+
+	
+
 	VkPhysicalDeviceFeatures enable_physical_features{
-			.robustBufferAccess = false ,
+			.robustBufferAccess = false,
 			.fullDrawIndexUint32 = false ,
 			.imageCubeArray = false ,
 			.independentBlend = false ,
@@ -555,6 +637,7 @@ int main2() {
 	vk_device_create_info.pEnabledFeatures = &enable_physical_features;
 	vk_device_create_info.pQueueCreateInfos = &vk_device_queue_create_info;
 	vk_device_create_info.queueCreateInfoCount = 1;
+	vk_device_create_info.pNext = &desc_features;
 
 	{
 		auto res = vkCreateDevice(m_vk_physical_device, &vk_device_create_info, nullptr, &m_vk_device);
@@ -636,7 +719,7 @@ int main2() {
 		.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
 		.surface = m_vk_surface,
 		.minImageCount = 3,
-		.imageFormat = VK_FORMAT_B8G8R8A8_SRGB,
+		.imageFormat = VK_FORMAT_R8G8B8A8_SRGB,
 		.imageColorSpace = VK_COLORSPACE_SRGB_NONLINEAR_KHR,
 		.imageExtent = VkExtent2D{ width, height },
 		.imageArrayLayers = 1,
@@ -679,7 +762,7 @@ int main2() {
 			.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
 			.image = vk_swapchain_image[i],
 			.viewType = VK_IMAGE_VIEW_TYPE_2D,
-			.format = VK_FORMAT_B8G8R8A8_SRGB,
+			.format = VK_FORMAT_R8G8B8A8_SRGB,
 			.components = {VK_COMPONENT_SWIZZLE_IDENTITY},
 			.subresourceRange = {
 				.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
@@ -1377,137 +1460,314 @@ int main2() {
 		}
 	};
 
-
-
-	VkDescriptorSetLayoutCreateInfo m_vk_descriptor_set_layout_create_info{
-		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+	VkBuffer good_buffer{};
+	VmaAllocation go_allocP{};
+	VkBufferCreateInfo good_buffer_ci{
+		.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.bindingCount = 4,
-		.pBindings = binding_info
+		.size = sizeof(objInfo),
+		.usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+		.queueFamilyIndexCount = 0,
+		.pQueueFamilyIndices = nullptr
 	};
 
-	VkDescriptorSetLayout m_vk_set_layout{};
-	if (VK_SUCCESS != vkCreateDescriptorSetLayout(m_vk_device, &m_vk_descriptor_set_layout_create_info,
-		nullptr, &m_vk_set_layout)) {
-		__debugbreak();
-	}
-
-	VkDescriptorPoolSize pool_size[4]{
-
-		{
-			.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-			.descriptorCount = 1
-		},
-		{
-			.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-			.descriptorCount = 1
-		},
-		{
-			.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-			.descriptorCount = 1
-		},
-		{
-			.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			.descriptorCount = 1,
-		},
+	VmaAllocationCreateInfo good_buffer_alloc_info{
+		.flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT,
+		.usage = VMA_MEMORY_USAGE_AUTO,
 	};
 
+	vmaCreateBuffer(vma_allocator, &good_buffer_ci, &good_buffer_alloc_info, &good_buffer, &go_allocP, nullptr);
+	void* pm = nullptr;
+	vmaMapMemory(vma_allocator, go_allocP, &pm);
+	memcpy(pm, &OBJ_INFO, sizeof(objInfo));
 
-	VkDescriptorPoolCreateInfo descriptor_pool_create_info{
+	//Pool
+
+	VkDescriptorPool good_desc_pool{};
+
+	std::array size = {
+		VkDescriptorPoolSize{.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,.descriptorCount = 8192 * 3},
+		VkDescriptorPoolSize{.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,.descriptorCount = 8192 },
+	};
+
+	VkDescriptorPoolCreateInfo descpool_ci{
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
-		.pNext = nullptr,
 		.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT,
-		.maxSets = 1,
-		.poolSizeCount = 4,
-		.pPoolSizes = pool_size
+		.maxSets = 32,
+		.poolSizeCount = size.size(),
+		.pPoolSizes = size.data()
 	};
 
-	if (VK_SUCCESS != vkCreateDescriptorPool(m_vk_device, &descriptor_pool_create_info, nullptr,
-		&m_vk_descriptor_pool)) {
-		__debugbreak();
+	vkCreateDescriptorPool(m_vk_device, &descpool_ci, nullptr, &good_desc_pool);
+
+
+	//FLAGS
+	VkDescriptorBindingFlags setlayout_flag = VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT;
+
+	std::vector setlayout_flags(1, setlayout_flag);
+
+	VkDescriptorSetLayoutBindingFlagsCreateInfo setlayout_flag_ci{
+		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO,
+		.pNext = nullptr,
+		.bindingCount = static_cast<uint32_t>(setlayout_flags.size()),
+		.pBindingFlags = setlayout_flags.data()
+	};
+
+	//Image setlayout
+
+
+	std::array global_image_binding{
+		VkDescriptorSetLayoutBinding{0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 8192, VkShaderStageFlagBits::VK_SHADER_STAGE_ALL, nullptr},
+	};
+
+	VkDescriptorSetLayoutCreateInfo global_image_setlayout_ci {
+		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+		.pNext = &setlayout_flag_ci,
+		.flags = 0,
+		.bindingCount = global_image_binding.size(),
+		.pBindings = global_image_binding.data()
+	};
+
+	VkDescriptorSetLayout global_image_setlayout{};
+
+	if(vkCreateDescriptorSetLayout(m_vk_device, &global_image_setlayout_ci, nullptr, &global_image_setlayout) == VK_SUCCESS) {
+		println("global_image_setlayout set layout create success");
 	}
-	printf("Descriptor pool create success");
 
 
-	VkDescriptorSetAllocateInfo set_alloc_info{
+	//buffers setlayout
+	std::array global_buffer_binding{
+		VkDescriptorSetLayoutBinding{0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 8192, VkShaderStageFlagBits::VK_SHADER_STAGE_ALL, nullptr},
+	};
+
+	VkDescriptorSetLayoutCreateInfo global_buffer_set_layout_ci{
+		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+		.pNext = &setlayout_flag_ci,
+		.flags = 0,
+		.bindingCount = global_buffer_binding.size(),
+		.pBindings = global_buffer_binding.data()
+	};
+	VkDescriptorSetLayout global_buffer_setlayout{};
+
+	if (vkCreateDescriptorSetLayout(m_vk_device, &global_buffer_set_layout_ci, nullptr, &global_buffer_setlayout) == VK_SUCCESS) {
+		println("global_buffer_set_layout_ci set layout create success");
+	}
+
+
+
+	//alloc
+
+	VkDescriptorSetAllocateInfo global_set_alloc{
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
 		.pNext = nullptr,
-		.descriptorPool = m_vk_descriptor_pool,
+		.descriptorPool = good_desc_pool,
 		.descriptorSetCount = 1,
-		.pSetLayouts = &m_vk_set_layout
+		.pSetLayouts = &global_image_setlayout
 	};
 
-	VkDescriptorSet one_set{};
+	VkDescriptorSet images_set{};
+	if(VK_SUCCESS == vkAllocateDescriptorSets(m_vk_device, &global_set_alloc, &images_set)) {
+		println("images_set allocate set success");
+	}
 
 
-	vkAllocateDescriptorSets(m_vk_device, &set_alloc_info, &one_set);
+	// 0: global, 1: material, 2: per object
+	VkDescriptorSet buffers_set[3]{};
 
-
-	VkDescriptorBufferInfo buffer_info_ubo{
-		.buffer = vk_buffer_ubo,
-		.range = sizeof(ubo)
+	VkDescriptorSetLayout layouts[3] = {
+		global_buffer_setlayout,
+		global_buffer_setlayout,
+		global_buffer_setlayout
 	};
 
-	VkDescriptorBufferInfo buffer_info_camera{
-		.buffer = vk_buffer_camera,
-		.range = sizeof(camera_info)
+	global_set_alloc = {
+		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+		.pNext = nullptr,
+		.descriptorPool = good_desc_pool,
+		.descriptorSetCount = 3,
+		.pSetLayouts = layouts
 	};
 
-	VkDescriptorBufferInfo buffer_info_model{
-		.buffer = vk_buffer_model,
-		.range = sizeof(model_info)
-	};
+	if (VK_SUCCESS == vkAllocateDescriptorSets(m_vk_device, &global_set_alloc, buffers_set)) {
+		println("buffers_set 3 allocate set success");
+	}
 
-	VkDescriptorImageInfo matcap_image{
+	//write
+
+	VkDescriptorImageInfo image_info{
 		.sampler = m_vk_sampler,
 		.imageView = image_view_matcap,
 		.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 	};
 
-
-	VkWriteDescriptorSet write_set{
-		.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-		.dstSet = one_set,
-		.descriptorCount = 1,
-		.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-		.pBufferInfo = &buffer_info_ubo,
+	VkDescriptorBufferInfo buf_info{
+		.buffer = good_buffer,
+		.offset = 0,
+		.range = sizeof(objInfo)
 	};
 
-	VkWriteDescriptorSet write_set_camera{
+	std::vector<VkWriteDescriptorSet> img_write_set{
+		{
 		.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-		.dstSet = one_set,
-		.dstBinding = 1,
+		.pNext = nullptr,
+		.dstSet = buffers_set[0],
+		.dstBinding = 0,
+		.dstArrayElement = 0,
 		.descriptorCount = 1,
-		.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-		.pBufferInfo = &buffer_info_camera,
-	};
-
-	VkWriteDescriptorSet write_set_model{
+		.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+		.pImageInfo = nullptr,
+		.pBufferInfo = &buf_info,
+		.pTexelBufferView = nullptr
+		},
+		{
 		.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-		.dstSet = one_set,
-		.dstBinding = 2,
-		.descriptorCount = 1,
-		.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-		.pBufferInfo = &buffer_info_model,
-	};
-
-	VkWriteDescriptorSet write_set_sampler {
-		.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-		.dstSet = one_set,
-		.dstBinding = 3,
+		.pNext = nullptr,
+		.dstSet = images_set,
+		.dstBinding = 0,
+		.dstArrayElement = 0,
 		.descriptorCount = 1,
 		.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-		.pImageInfo = &matcap_image
+		.pImageInfo = &image_info,
+		.pBufferInfo = nullptr,
+		.pTexelBufferView = nullptr
+		},
 	};
 
-	ubo myData{ 0.0f };
-	memcpy(p_data, &myData, sizeof(myData));
+	vkUpdateDescriptorSets(m_vk_device, img_write_set.size(), img_write_set.data(), 0, nullptr);
+	
 
-	vkUpdateDescriptorSets(m_vk_device, 1, &write_set, 0, nullptr);
-	vkUpdateDescriptorSets(m_vk_device, 1, &write_set_camera, 0, nullptr);
-	vkUpdateDescriptorSets(m_vk_device, 1, &write_set_model, 0, nullptr);
-	vkUpdateDescriptorSets(m_vk_device, 1, &write_set_sampler, 0, nullptr);
+
+	//VkDescriptorSetLayoutCreateInfo m_vk_descriptor_set_layout_create_info{
+	//	.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+	//	.pNext = nullptr,
+	//	.flags = 0,
+	//	.bindingCount = 4,
+	//	.pBindings = binding_info
+	//};
+
+	//VkDescriptorSetLayout m_vk_set_layout{};
+	//if (VK_SUCCESS != vkCreateDescriptorSetLayout(m_vk_device, &m_vk_descriptor_set_layout_create_info,
+	//	nullptr, &m_vk_set_layout)) {
+	//	__debugbreak();
+	//}
+
+	//VkDescriptorPoolSize pool_size[4]{
+
+	//	{
+	//		.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+	//		.descriptorCount = 1
+	//	},
+	//	{
+	//		.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+	//		.descriptorCount = 1
+	//	},
+	//	{
+	//		.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+	//		.descriptorCount = 1
+	//	},
+	//	{
+	//		.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+	//		.descriptorCount = 1,
+	//	},
+	//};
+
+
+	//VkDescriptorPoolCreateInfo descriptor_pool_create_info{
+	//	.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+	//	.pNext = nullptr,
+	//	.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT,
+	//	.maxSets = 1,
+	//	.poolSizeCount = 4,
+	//	.pPoolSizes = pool_size
+	//};
+
+	//if (VK_SUCCESS != vkCreateDescriptorPool(m_vk_device, &descriptor_pool_create_info, nullptr,
+	//	&m_vk_descriptor_pool)) {
+	//	__debugbreak();
+	//}
+	//printf("Descriptor pool create success");
+
+
+	//VkDescriptorSetAllocateInfo set_alloc_info{
+	//	.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+	//	.pNext = nullptr,
+	//	.descriptorPool = m_vk_descriptor_pool,
+	//	.descriptorSetCount = 1,
+	//	.pSetLayouts = &m_vk_set_layout
+	//};
+
+	//VkDescriptorSet one_set{};
+
+
+	//vkAllocateDescriptorSets(m_vk_device, &set_alloc_info, &one_set);
+
+
+	//VkDescriptorBufferInfo buffer_info_ubo{
+	//	.buffer = vk_buffer_ubo,
+	//	.range = sizeof(ubo)
+	//};
+
+	//VkDescriptorBufferInfo buffer_info_camera{
+	//	.buffer = vk_buffer_camera,
+	//	.range = sizeof(camera_info)
+	//};
+
+	//VkDescriptorBufferInfo buffer_info_model{
+	//	.buffer = vk_buffer_model,
+	//	.range = sizeof(model_info)
+	//};
+
+	//VkDescriptorImageInfo matcap_image{
+	//	.sampler = m_vk_sampler,
+	//	.imageView = image_view_matcap,
+	//	.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+	//};
+
+
+	//VkWriteDescriptorSet write_set{
+	//	.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+	//	.dstSet = one_set,
+	//	.descriptorCount = 1,
+	//	.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+	//	.pBufferInfo = &buffer_info_ubo,
+	//};
+
+	//VkWriteDescriptorSet write_set_camera{
+	//	.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+	//	.dstSet = one_set,
+	//	.dstBinding = 1,
+	//	.descriptorCount = 1,
+	//	.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+	//	.pBufferInfo = &buffer_info_camera,
+	//};
+
+	//VkWriteDescriptorSet write_set_model{
+	//	.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+	//	.dstSet = one_set,
+	//	.dstBinding = 2,
+	//	.descriptorCount = 1,
+	//	.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+	//	.pBufferInfo = &buffer_info_model,
+	//};
+
+	//VkWriteDescriptorSet write_set_sampler {
+	//	.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+	//	.dstSet = one_set,
+	//	.dstBinding = 3,
+	//	.descriptorCount = 1,
+	//	.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+	//	.pImageInfo = &matcap_image
+	//};
+
+	//ubo myData{ 0.0f };
+	//memcpy(p_data, &myData, sizeof(myData));
+
+	//vkUpdateDescriptorSets(m_vk_device, 1, &write_set, 0, nullptr);
+	//vkUpdateDescriptorSets(m_vk_device, 1, &write_set_camera, 0, nullptr);
+	//vkUpdateDescriptorSets(m_vk_device, 1, &write_set_model, 0, nullptr);
+	//vkUpdateDescriptorSets(m_vk_device, 1, &write_set_sampler, 0, nullptr);
 
 	std::printf("\n====Pipeline create==============================================================================\n");
 	VkPipeline vk_pipeline{};
@@ -1535,8 +1795,17 @@ int main2() {
 
 	//auto src_vert = Warp::GPU::ShaderCompiler::compile_shader_from_file("../../../Shader/shader_ubo.vert", EShLangVertex);
 	//auto src_frag = Warp::GPU::ShaderCompiler::compile_shader_from_file("../../../Shader/shader_ubo.frag", EShLangFragment);
-	Warp::GPU::ShaderCompiler::compile_shader_from_file("../../../Shader/shader_ubo.vert", "vert", EShLangVertex, src_vert);
-	Warp::GPU::ShaderCompiler::compile_shader_from_file("../../../Shader/shader_ubo.frag", "frag", EShLangFragment, src_frag);
+	MString err = Warp::GPU::ShaderCompiler::compile_shader_from_file("../../../Shader/shader_ubo.vert", "vert", EShLangVertex, src_vert);
+	MString err2 = Warp::GPU::ShaderCompiler::compile_shader_from_file("../../../Shader/shader_ubo.frag", "frag", EShLangFragment, src_frag);
+
+	if(!err.empty()){
+		println("vert shader compile error: {}", err);
+	}
+
+	if(!err2.empty())
+	{
+		println("frag shader compile error: {}", err2);
+	}
 
 	VkShaderModuleCreateInfo vk_shader_module_create_info[2]{};
 	vk_shader_module_create_info[0].sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
@@ -1654,15 +1923,31 @@ int main2() {
 
 	//layout
 	VkPipelineLayout vk_pipeline_layout{};
+
+	VkPushConstantRange range = {
+		.stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
+		.offset = 0,
+		.size = sizeof(objInfo)
+	};
+
+	VkDescriptorSetLayout good_set_layouts[4]{
+		global_image_setlayout,
+		global_buffer_setlayout,
+		global_buffer_setlayout,
+		global_buffer_setlayout
+	};
+
 	VkPipelineLayoutCreateInfo vk_pipeline_layout_create_info{
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.setLayoutCount = 1,
-		.pSetLayouts = &m_vk_set_layout,
+		.setLayoutCount = 4,
+		.pSetLayouts = good_set_layouts,
 		.pushConstantRangeCount = 0,
-		.pPushConstantRanges = nullptr
+		.pPushConstantRanges = nullptr //range
 	};
+
+
 	vk_pipeline_layout_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 	{
 		auto res = vkCreatePipelineLayout(m_vk_device, &vk_pipeline_layout_create_info, nullptr, &vk_pipeline_layout);
@@ -1763,6 +2048,12 @@ int main2() {
 	}
 
 
+	
+
+	
+
+
+
 	bool first = true;
 	int max_record = 0;
 	auto rendering_func = [&]() {
@@ -1777,7 +2068,7 @@ int main2() {
 		vkResetFences(m_vk_device, 1, &image_render_fence[current_render_idx]);
 
 		//std::printf("\n====Record Command==============================================================================\n");
-		if (max_record < swap_chain_image_count + 1) {
+		//if (max_record < swap_chain_image_count + 1) {
 			max_record++;
 		
 			vkResetCommandBuffer(vk_command_buffer[current_render_idx], 0);
@@ -1854,8 +2145,16 @@ int main2() {
 
 			vkCmdBindPipeline(vk_command_buffer[current_render_idx], VK_PIPELINE_BIND_POINT_GRAPHICS, vk_pipeline);
 
+
+			/*vkCmdPushConstants(vk_command_buffer[current_render_idx], vk_pipeline_layout, 
+				VkShaderStageFlagBits::VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(objInfo), &OBJ_INFO);*/
+
+			VkDescriptorSet sets[4] = { images_set, buffers_set[0], buffers_set[1], buffers_set[2] };
 			vkCmdBindDescriptorSets(vk_command_buffer[current_render_idx], VK_PIPELINE_BIND_POINT_GRAPHICS,
-			vk_pipeline_layout, 0, 1, &one_set, 0, nullptr);
+				vk_pipeline_layout, 0, 4, sets,0, nullptr);
+
+			/*vkCmdBindDescriptorSets(vk_command_buffer[current_render_idx], VK_PIPELINE_BIND_POINT_GRAPHICS,
+			vk_pipeline_layout, 0, 1, &one_set, 0, nullptr);*/
 
 			vkCmdSetViewport(vk_command_buffer[current_render_idx], 0, 1, &vk_view_port);
 			vkCmdSetScissor(vk_command_buffer[current_render_idx], 0, 1, &vk_scissors);
@@ -1872,7 +2171,7 @@ int main2() {
 				auto res = vkEndCommandBuffer(vk_command_buffer[current_render_idx]);
 				VK_CHECK(res);
 			}
-		}
+		//}
 
 		//std::printf("\n====Submit Commands==============================================================================\n");
 
@@ -1932,10 +2231,8 @@ int main2() {
 
 		if (sevent.type == SDL_EVENT_KEY_DOWN) {
 			switch (sevent.key.keysym.sym) {
-			case SDL_KeyCode::SDLK_a:myData.time += 0.1f; break;
-			case SDL_KeyCode::SDLK_d:myData.time -= 0.1f; break;
+			
 			}
-			memcpy(p_data, &myData, sizeof(myData));
 		}else if (sevent.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
 			if (sevent.button.button == SDL_BUTTON_MIDDLE) {
 				SDL_HideCursor();
@@ -1956,8 +2253,6 @@ int main2() {
 				moveX += sevent.motion.xrel;
 				moveY += sevent.motion.yrel;
 
-				camera_info camera_data{};
-
 				if (moveY > 360) {
 					moveY -= 360;
 				} else if (moveY < -360) {
@@ -1974,23 +2269,15 @@ int main2() {
 				glm::vec3 eye = final_rot_mat * eyePos;
 				glm::vec3 up = (final_rot_mat * glm::vec4(0.0f, -1.0f, 0.0f, 0.0f));
 
-				camera_data.V = glm::lookAt(eye, glm::vec3(0.0f, 0.0f, 0.0f), up);
+				OBJ_INFO.V = glm::lookAt(eye, glm::vec3(0.0f, 0.0f, 0.0f), up);
 
-				camera_data.P = glm::perspective(glm::radians(65.0f), (float)width / height, 0.1f, 1000.0f);
-				
+				OBJ_INFO.P = glm::perspective(glm::radians(65.0f), (float)width / height, 0.1f, 1000.0f);
 
-
-				memcpy(mapper_camera, &camera_data, sizeof(camera_info));
+				memcpy(pm, &OBJ_INFO, sizeof(objInfo));
 			}
 		}
-
-		/*model_info model_data_loop{};
-		auto tempM = glm::mat4(1.0f);
-		model_data_loop.M = glm::rotate(tempM, glm::radians(myData.time * 25.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		memcpy(mapper_model, &model_data_loop, sizeof(model_data_loop));
-		;*/
 		
-		};
+	};
 	std::printf("\n====loop==============================================================================\n");
 	//sdl
 	SDL_Event event{};

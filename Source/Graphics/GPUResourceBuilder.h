@@ -8,10 +8,6 @@
 #include "GPUHelper.h"
 #include "GPUShaderCompiler.h"
 
-#include <memory>
-#include <string>
-#include <type_traits>
-
 #include "Core/Utils.h"
 
 #include "Graphics/Builder/GPUBufferBuilder.h"
