@@ -3,7 +3,7 @@
 
 #include "Graphics/GPUFactory.h"
 #include "Core/MIStl.h"
-#include "Core/MIResource.h"
+#include "Core/WObject.h"
 
 #include "Graphics/VulkanFiles.h"
 
@@ -12,7 +12,7 @@ namespace Warp
 	namespace GPU
 	{
 
-		class GPUResource : public MIResource {
+		class GPUResource : public WObject {
 		public:
 
 			template<class T>

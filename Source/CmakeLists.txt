@@ -1,64 +1,3 @@
-
-SET(SRC_WarpEngine
-	"WarpEngine/main.cpp"
-	#"WarpEngine/WarpBase.hpp"
-	#"WarpEngine/WarpMath.hpp"
-	#"WarpEngine/WarpEngine.hpp"
-	#"WarpEngine/WarpEngine.cpp"
-	#"WarpEngine/WarpError.hpp"
-	#"WarpEngine/WarpEarCut.hpp"
-	#"WarpEngine/WarpString.cpp"
-	#"WarpEngine/WarpString.hpp"
-	#"Image/stb_image_write.h" 
-	#"Image/stb_image_resize.h" 
-	#"Image/image.h"
-	#"Image/stb_image.h" 
-	#"Image/image.cpp"
-	#"WSCS/WSCS.hpp"
-	#"WSCS/WSCAST.hpp"
-	#"WSCS/WSCLexer.hpp"
-	#"WSCS/WSCParser.hpp"
-	"Loaders/tiny_obj_loader.h"
-	"Loaders/tiny_obj_loader.cpp"
-
-	"WarpEngine/windows-helper.cpp"
-	"WarpEngine/windows-helper.hpp"
-	
-	"Core/utils.hpp"
-	"Core/log.hpp"
-	"Core/math.hpp"
-	"Core/utils.cpp"
-	"Core/vma.cpp"
-	"Core/vma.hpp"
-	"Core/vk_mem_alloc.h"
-	"Core/common.hpp"
-
-	"Render/context.hpp"
-	"Render/context.cpp"
-	"Render/swapchain.cpp"
-	"Render/swapchain.hpp"
-	"Render/render_window.cpp"
-	"Render/render_window.hpp"
-	"Render/pipeline.hpp"
-	"Render/pipeline.cpp"
-	"Render/renderpass.cpp"
-	"Render/renderpass.hpp"
-	"Render/glsl_compiler.hpp"
-	"Render/glsl_compiler.cpp"
-	"Render/rendertarget.cpp"
-	"Render/rendertarget.hpp"
-	"Render/framebuffer.hpp"
-	"Render/framebuffer.cpp"
-	"Render/image.cpp"
-	"Render/image.hpp"
-	"Render/image_view.hpp"
-	"Render/image_view.cpp"
-	"Render/command_buffer.cpp"
-	"Render/command_buffer.hpp"
-	"Render/command_pool.hpp"
-	"Render/command_pool.cpp"
-)
-
 set(ONCE 
 	"OnceVulkanMain.cpp"
 
@@ -66,9 +5,15 @@ set(ONCE
 	"Core/Utils.h"
 	"Core/Log.h"
 	"Core/MIStl.h"
-	"Core/MIResource.h"
-	"Core/MIResource.cpp"
 
+	"Core/Object.h"
+	"Core/Object.cpp"
+
+	"Core/TypeName.hpp"
+
+	"Core/ResourceManager.hpp"
+
+	"Core/Auxiliary.hpp"
 	"Loaders/tiny_obj_loader.h" 
 	"Loaders/tiny_obj_loader.cpp" 
 
@@ -221,9 +166,41 @@ set(ONCE
 	"Render/RenderShaderSystem.h"
 	"Render/RenderShaderSystem.cpp"
 
-)
+ "Render/Material/Material.h" "Render/Material/Material.cpp")
 
-add_executable(WarpEngine ${ONCE})
+
+ set(WpEngine 
+	"Core/Object.hpp"
+	"Core/Object.cpp"
+	"Core/Inherit.hpp"
+	"Core/Logger.hpp"
+
+	"Core/Allocator.hpp"
+
+	"Core/Data.hpp"
+	"Core/Output.hpp"
+	"Core/Input.hpp"
+
+	"Core/TypeName.hpp"
+
+	"Core/own_ptr.hpp"
+	"Core/observer_ptr.hpp"
+
+	"Core/Modifier.cpp"
+	"Core/Modifier.hpp"
+
+	"Vk/Vma/vma.h"
+	"Vk/Vma/vma.cpp"
+	"Vk/Device.hpp"
+	"Vk/Device.cpp"
+
+	"Vk/VkBase.hpp"
+	"Vk/Instance.hpp"
+	"Vk/Context.hpp"
+
+	"NewMain.cpp"
+  "Vk/Instance.cpp")
+add_executable(WarpEngine ${WpEngine})
 add_definitions(${LLVM_DEFINITIONS})
 
 target_include_directories(WarpEngine PRIVATE "." 

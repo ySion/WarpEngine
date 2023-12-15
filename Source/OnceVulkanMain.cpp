@@ -418,7 +418,7 @@ int main() {
 		glm::mat4 P;
 
 	};
-	uint32_t width = 1280, height = 720;
+	uint32_t width = 1280, height = 760;
 	VkSampleCountFlagBits multisample_setting = VK_SAMPLE_COUNT_8_BIT;
 
 
@@ -1137,6 +1137,7 @@ int main() {
 	std::vector<tinyobj::shape_t> shape{};
 	std::vector<tinyobj::material_t> mats{};
 
+
 	if (tinyobj::LoadObj(&attrib, &shape, &mats, nullptr, "D:/box.obj")) {
 		println("load obj success");
 	}
@@ -1150,9 +1151,45 @@ int main() {
 
 	std::vector<ObjVertexInfo> vertex_info{};
 	std::vector<uint32_t> index_info{};
-	vertex_info.reserve(2048);
-	index_info.reserve(2048);
+	vertex_info.reserve(81920);
+	index_info.reserve(81920);
 
+	println("vertex : has {} ", attrib.vertices.size());
+	println("normals : has {} ", attrib.normals.size());
+	println("texcoords : has {} ", attrib.texcoords.size());
+
+	//for(int i = 0; i < attrib.vertices.size() / 3; i ++)
+	//{
+	//	vertex_info.push_back({
+	//		.pos = {
+	//			attrib.vertices[3 * i + 0],
+	//			attrib.vertices[3 * i + 1],
+	//			attrib.vertices[3 * i + 2]
+	//		},
+	//		.normal = {
+	//			attrib.normals[3 * i + 0],
+	//			attrib.normals[3 * i + 1],
+	//			attrib.normals[3 * i + 2],
+	//		},
+	//		.uv = {
+	//			attrib.texcoords[2 * i + 0],
+	//			attrib.texcoords[2 * i + 1]
+	//		}
+	//	});
+	//	//println("vertex : {} {} {}", attrib.vertices[i], attrib.vertices[i + 1], attrib.vertices[i + 2]);
+	//}
+
+	/*for (auto& i : shape) {
+		for (auto& j : i.mesh.indices) {
+			index_info.push_back(j.vertex_index);
+		}
+	}*/
+
+	println("vertex : has {} ", vertex_info.size());
+	println("index : has {} ", index_info.size());
+
+	
+	//shape[0].mesh.
 	for (auto& i : shape) {
 		for (auto& j : i.mesh.indices) {
 			vertex_info.push_back({
@@ -1160,11 +1197,14 @@ int main() {
 					/*attrib.texcoords[2 * j.texcoord_index + 0],
 					attrib.texcoords[2 * j.texcoord_index + 1],
 					0,*/
+
 					attrib.vertices[3 * j.vertex_index + 0],
 					attrib.vertices[3 * j.vertex_index + 1],
 					attrib.vertices[3 * j.vertex_index + 2]
 				},
 				.normal = {
+					//attrib.normals[3 * j.normal_index + 0],
+
 					attrib.normals[3 * j.normal_index + 0],
 					attrib.normals[3 * j.normal_index + 1],
 					attrib.normals[3 * j.normal_index + 2],
@@ -1260,7 +1300,7 @@ int main() {
 	memcpy(vertp, vertex_info.data(), sizeof(ObjVertexInfo) * vertex_info.size());
 
 
-	println("index copy success");
+	println("vertex copy success");
 
 	VkVertexInputBindingDescription vertex_input_binding_description{
 		.binding = 0,
@@ -1290,7 +1330,7 @@ int main() {
 	};
 
 	std::printf("\n====Samper create==============================================================================\n");
-
+	kl,.
 	VkSampler m_vk_sampler{};
 	VkSamplerCreateInfo samplerci{
 			.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
@@ -1421,7 +1461,7 @@ int main() {
 	camera_data.V = glm::lookAt(glm::vec3(0.0f, 3.0f, 3.0f),
 				glm::vec3(0.0f, 0.0f, 0.0f),
 				glm::vec3(0.0, -1.0f, 0.0f));
-	camera_data.P = glm::perspective(glm::radians(65.0f), (float)width / height, 0.1f, 1000.0f);
+	camera_data.P = glm::perspective(glm::radians(46.7f), (float)width / height, 0.1f, 1000.0f);
 
 
 	memcpy(mapper_camera, &camera_data, sizeof(camera_info));
@@ -1460,6 +1500,7 @@ int main() {
 		}
 	};
 
+	//buffer0 for CPU
 	VkBuffer good_buffer{};
 	VmaAllocation go_allocP{};
 	VkBufferCreateInfo good_buffer_ci{
@@ -1467,7 +1508,7 @@ int main() {
 		.pNext = nullptr,
 		.flags = 0,
 		.size = sizeof(objInfo),
-		.usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+		.usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
 		.queueFamilyIndexCount = 0,
 		.pQueueFamilyIndices = nullptr
@@ -1482,6 +1523,28 @@ int main() {
 	void* pm = nullptr;
 	vmaMapMemory(vma_allocator, go_allocP, &pm);
 	memcpy(pm, &OBJ_INFO, sizeof(objInfo));
+
+	//buffer0 for GPU
+	VkBuffer good_buffer_gpu{};
+	VmaAllocation go_alloc_gpu{};
+	VkBufferCreateInfo good_buffer_gpu_ci{
+		.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0,
+		.size = sizeof(objInfo),
+		.usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+		.queueFamilyIndexCount = 0,
+		.pQueueFamilyIndices = nullptr
+	};
+
+	VmaAllocationCreateInfo good_buffer_gpu_alloc_info{
+		.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE,
+	};
+
+	vmaCreateBuffer(vma_allocator, &good_buffer_gpu_ci, &good_buffer_gpu_alloc_info, &good_buffer_gpu, &go_alloc_gpu, nullptr);
+
+
 
 	//Pool
 
@@ -1603,7 +1666,7 @@ int main() {
 	};
 
 	VkDescriptorBufferInfo buf_info{
-		.buffer = good_buffer,
+		.buffer = good_buffer_gpu,
 		.offset = 0,
 		.range = sizeof(objInfo)
 	};
@@ -2052,7 +2115,8 @@ int main() {
 
 	
 
-
+	println("Draw {} index !!!!!!!!!!!!!!!!!!!", index_info.size());
+	println("Draw {} vertex !!!!!!!!!!!!!!!!!!!", vertex_info.size());
 
 	bool first = true;
 	int max_record = 0;
@@ -2068,7 +2132,7 @@ int main() {
 		vkResetFences(m_vk_device, 1, &image_render_fence[current_render_idx]);
 
 		//std::printf("\n====Record Command==============================================================================\n");
-		//if (max_record < swap_chain_image_count + 1) {
+		if (max_record < swap_chain_image_count + 1) {
 			max_record++;
 		
 			vkResetCommandBuffer(vk_command_buffer[current_render_idx], 0);
@@ -2097,7 +2161,7 @@ int main() {
 			if (first) {
 
 				VkBufferCopy copyRegion1{};
-				copyRegion1.size = sizeof(ObjVertexInfo) * index_info.size();
+				copyRegion1.size = sizeof(ObjVertexInfo) * vertex_info.size();
 				vkCmdCopyBuffer(vk_command_buffer[current_render_idx], vertex_buffer, vertex_buffer_GPU, 1, &copyRegion1);
 
 				VkBufferCopy copyRegion2{};
@@ -2141,6 +2205,11 @@ int main() {
 					VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, nullptr, 0, nullptr, 1, &bar);
 			}
 
+			VkBufferCopy copyRegion3{};
+			copyRegion3.size = sizeof(objInfo);
+			vkCmdCopyBuffer(vk_command_buffer[current_render_idx], good_buffer, good_buffer_gpu, 1, &copyRegion3);
+
+
 			vkCmdBeginRenderPass(vk_command_buffer[current_render_idx], &vk_render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
 
 			vkCmdBindPipeline(vk_command_buffer[current_render_idx], VK_PIPELINE_BIND_POINT_GRAPHICS, vk_pipeline);
@@ -2163,7 +2232,7 @@ int main() {
 			vkCmdBindVertexBuffers(vk_command_buffer[current_render_idx], 0, 1, &vertex_buffer_GPU, &offset);
 			vkCmdBindIndexBuffer(vk_command_buffer[current_render_idx], index_buffer_GPU, 0, VK_INDEX_TYPE_UINT32);
 
-			vkCmdDrawIndexed(vk_command_buffer[current_render_idx], index_info.size(), 1, 0, 0, 0);
+			vkCmdDraw(vk_command_buffer[current_render_idx], index_info.size(), 1, 0, 0);
 
 			vkCmdEndRenderPass(vk_command_buffer[current_render_idx]);
 
@@ -2171,7 +2240,7 @@ int main() {
 				auto res = vkEndCommandBuffer(vk_command_buffer[current_render_idx]);
 				VK_CHECK(res);
 			}
-		//}
+		}
 
 		//std::printf("\n====Submit Commands==============================================================================\n");
 
@@ -2249,7 +2318,6 @@ int main() {
 		} else if (sevent.type == SDL_EVENT_MOUSE_MOTION) {
 			if (relta_mouse_mode) {
 
-
 				moveX += sevent.motion.xrel;
 				moveY += sevent.motion.yrel;
 
@@ -2264,14 +2332,14 @@ int main() {
 				glm::quat final_rot = glm::normalize(yRot * xRot);
 				glm::mat4 final_rot_mat = glm::mat4_cast(final_rot);
 
-				glm::vec4 eyePos = glm::vec4(0.0f, 0.0f, 3.0f, 1.0f);
+				glm::vec4 eyePos = glm::vec4(0.0f, 0.0f, 6.0f, 1.0f);
 
 				glm::vec3 eye = final_rot_mat * eyePos;
 				glm::vec3 up = (final_rot_mat * glm::vec4(0.0f, -1.0f, 0.0f, 0.0f));
 
 				OBJ_INFO.V = glm::lookAt(eye, glm::vec3(0.0f, 0.0f, 0.0f), up);
 
-				OBJ_INFO.P = glm::perspective(glm::radians(65.0f), (float)width / height, 0.1f, 1000.0f);
+				OBJ_INFO.P = glm::perspective(glm::radians(46.7f), (float)width / height, 0.1f, 1000.0f);
 
 				memcpy(pm, &OBJ_INFO, sizeof(objInfo));
 			}

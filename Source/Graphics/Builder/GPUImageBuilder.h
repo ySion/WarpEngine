@@ -185,7 +185,7 @@ namespace Warp {
 					obj->m_memory_usage = create_info.ci_allocation.usage;
 					obj->m_memory_flag = create_info.ci_allocation.flags;
 					obj->m_born_init_layout = create_info.ci_image.initialLayout;
-
+					
 					VkImageViewCreateInfo ci_view = {
 							.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
 							.pNext = nullptr,

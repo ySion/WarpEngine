@@ -33,12 +33,12 @@ namespace Warp
 				glslang::TShader shader{ lang };
 				shader.setStringsWithLengthsAndNames(&p, nullptr, &fname, 1);
 				shader.setEntryPoint("main");
-				shader.setEnvInput(glslang::EShSourceGlsl, lang, glslang::EShClientVulkan, 100);
+				shader.setEnvInput(glslang::EShSourceGlsl, lang, glslang::EShClientVulkan, 460);
 				shader.setEnvTarget(glslang::EShTargetCount, glslang::EShTargetSpv_1_6);
 				shader.setEnvClient(glslang::EShClientVulkan, glslang::EShTargetVulkan_1_3);
-
+				
 				constexpr EShMessages mesages = static_cast<EShMessages>(EShMsgDefault | EShMsgVulkanRules | EShMsgSpvRules);
-				if (!shader.parse(GetDefaultResources(), 100, false, mesages)) {
+				if (!shader.parse(GetDefaultResources(), 460, false, mesages)) {
 					return std::format("parse stage error:\n{}\n{}", shader.getInfoLog(), shader.getInfoDebugLog()).c_str();
 				}
 

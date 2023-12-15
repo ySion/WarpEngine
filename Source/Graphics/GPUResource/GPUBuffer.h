@@ -8,7 +8,7 @@ namespace Warp {
 
 	namespace GPU {
 
-		class GPUBufferView : public MIResource {
+		class GPUBufferView : public WObject {
 		public:
 			struct Deleter {
 				constexpr void operator()(const GPUBufferView* ptr) const {

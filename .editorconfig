@@ -68,7 +68,7 @@ cpp_space_pointer_reference_alignment = left
 cpp_space_around_ternary_operator = insert
 cpp_use_unreal_engine_macro_formatting = true
 cpp_wrap_preserve_blocks = one_liners
-
+cpp_indent_preprocessor = none
 # Visual C++ 包含清理设置
 
 cpp_include_cleanup_add_missing_error_tag_type = suggestion
