@@ -1,125 +1,76 @@
 #include "iostream"
 
 #include "Core/Object.hpp"
-#include "Core/own_ptr.hpp"
 #include "Core/observer_ptr.hpp"
 #include "Core/Inherit.hpp"
 #include "Core/Allocator.hpp"
 #include "Core/TypeName.hpp"
 #include "Core/MIStl.h"
-#include "Vk/Instance.hpp"
+#include "Vk/Context.hpp"
+#include "Vk/GlslCompiler.hpp"
+#include "Vk/RenderPass.hpp"
+
 
 using namespace Warp;
 
 
-namespace Warp
-{
-	uint64_t p = 0;
-	class APP;
-	WARP_TYPE_NAME(APP)
-
-	class APP : public Inherit<APP, Object>{
-	public:
-		APP() {
-			p++;
-		}
-
-		void pr() {
-			printf("hello worldf");
-		}
-	};
-
-
-	class APP2 : public Inherit<APP2, APP> {
-	public:
-		APP2() {
-			p++;
-		}
-	};
-
-	class DD : public Inherit<DD, Object> {
-	public:
-		DD() = default;
-		DD(int i) {
-			p++;
-		}
-	};
-}
-
-
-
-
 int main() {
 
-
 	{
-		own_ptr<Gpu::Instance> ptt3 = Gpu::Instance::create();
-
-		//own_ptr<Gpu::Instance> ptt3 = Gpu::Instance::create();
-
-		//MVector<own_ptr<DD>> P{};
-
-		observer_ptr<Gpu::Instance> ins = ptt3.get();
-
-	}
+		std::unique_ptr<Gpu::Context> ctx{ new Warp::Gpu::Context };
+		auto ptr = ctx->create_window("hello", 800, 600, SDL_WINDOW_RESIZABLE);
 
 
-	MString hello = "hello world";
 
-	auto a = hello.split(" ");
+		std::vector<uint8_t> file_data;
+		size_t file_size = 0;
+		void* buffer = SDL_LoadFile("../../../Shader/shader.vert", &file_size);
 
-
-	MString t2 = MString::format("hello world {}, {}, {}", 666, 222, "kakaka");
-
-	std::cout << t2 << std::endl;
-
-	{
-		for(int i = 0; i < 100000; i++) {
-			auto p = Warp::APP::create();
-			p.release();
-			
+		if(buffer != nullptr) {
+			file_data.resize(file_size);
+			memcpy(file_data.data(), buffer, file_size);
+			std::vector<uint8_t> spirv{};
+			Warp::Gpu::GlslCompiler::compile_glsl_to_spirv(GLSLANG_STAGE_VERTEX, reinterpret_cast<const char*>(file_data.data()), spirv);
+			SDL_free(buffer);
 		}
-	}
-	
-	observer_ptr<APP> ptt = nullptr;
-	observer_ptr<DD> ptt2 = nullptr;
-
-
-
-	if (ptt.is_object_vaild()) {
-		printf("vaild\n");
-	} else {
-		printf("not vaild\n");
-	}
-	{
-		own_ptr<APP> p = APP::create();
-		own_ptr<DD> p2 = DD::create();
-
-		ptt = p.get();
-		ptt2 = p2.get();
 		
-		printf("\n%d\n", ptt2->is_compatible(ptt->get_type_info()));
+		
+		
+		
+		std::unique_ptr<Gpu::RenderPass> render{ new Gpu::RenderPass(ctx->get_device())};
 
-		if (ptt.is_object_vaild())
-		{
-			printf("vaild\n");
-		} else {
-			printf("not vaild\n");
+
+		render->add_color_attachement(VK_FORMAT_R8G8B8A8_SRGB, VK_SAMPLE_COUNT_1_BIT,
+					VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_STORE,
+					VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+					VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
+			.compile();
+
+		SDL_Event e;
+		while (true) {
+			SDL_PollEvent(&e);
+			if(e.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED) {
+				break;
+			}
+			if(e.type == SDL_EVENT_WINDOW_RESIZED) {
+				ptr->set_extent(e.window.data1, e.window.data2);
+				printf("resize to %d %d\n", e.window.data1, e.window.data2);
+			}
 		}
-	}
-	if (ptt.is_object_vaild()) {
-		printf("vaild\n");
-	} else {
-		printf("not vaild\n");
+		
+		printf("=====================\n");
+		auto b = AllocatorGroup::get_instance()->get_all_allocators();
+		for (const auto& [name, ptr] : b) {
+			std::cout << std::format("Object Manager: type \"{}\" at address {}, have {} objects\n", name, (void*)ptr, ptr->get_object_count());
+		}
+		printf("=====================\n");
 	}
 
-	
 	printf("=====================\n");
 	auto b = AllocatorGroup::get_instance()->get_all_allocators();
-	for(const auto& [name, ptr] : b) {
-		std::cout << std::format("Object Manager: type \"{}\" at address {}, have {} \n", name, (void*)ptr, ptr->get_object_count());
+	for (const auto& [name, ptr] : b) {
+		std::cout << std::format("Object Manager: type \"{}\" at address {}, have {} objects\n", name, (void*)ptr, ptr->get_object_count());
 	}
 	printf("=====================\n");
-
 	return 0;
 }

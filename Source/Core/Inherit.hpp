@@ -1,7 +1,6 @@
 #pragma once
-#include "TypeName.hpp"
+
 #include "Allocator.hpp"
-#include "own_ptr.hpp"
 #include "Object.hpp"
 
 namespace Warp {
@@ -13,10 +12,7 @@ namespace Warp {
 		template<typename... Args>
 		Inherit(Args&&... args) : ParentClass(args...) {}
 
-		template<typename... Args>
-		static own_ptr<ChildClass> create(Args&&... args) {
-			return own_ptr(new ChildClass(args...));
-		}
+		virtual ~Inherit() override = default;
 
 		static void* operator new(size_t size) {
 			return Allocator<ChildClass>::get_instance()->allocate(size);

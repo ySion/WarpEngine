@@ -17,11 +17,7 @@ namespace Warp {
 	template<> constexpr const char* type_name<int64_t>() noexcept { return "int64_t"; }
 	template<> constexpr const char* type_name<float>() noexcept { return "float"; }
 	template<> constexpr const char* type_name<double>() noexcept { return "dobule"; }
-
-	#define WARP_TYPE_NAME(T) \
-		class T; \
-		template<> constexpr const char* type_name<T>() noexcept { return #T; }
-
+	
 
 	template<class T>
 		requires std::is_integral_v<T>
@@ -48,5 +44,16 @@ namespace Warp {
 	}
 }
 
+#define WARP_TYPE_NAME(T) \
+	namespace Warp{class T;} \
+	template<> constexpr const char* ::Warp::type_name<::Warp::T>() noexcept { return #T; }
+
+#define WARP_TYPE_NAME_2(T, T2) \
+	namespace Warp::T{class T2;} \
+	template<> constexpr const char* ::Warp::type_name<::Warp::T::T2>() noexcept { return #T"::"#T2; }
+
+#define WARP_TYPE_NAME_3(T, T2, T3) \
+	namespace Warp::T::T2{class T3;} \
+	template<> constexpr const char* ::Warp::type_name<::Warp::T::T2::T3>() noexcept { return  #T"::"#T2"::"#T3; }
 
 

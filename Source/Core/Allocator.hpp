@@ -13,6 +13,7 @@ namespace Warp {
 	class Object;
 
 	class AllocatorBase;
+	template<class T> class Allocator;
 
 	struct AllocatorGlobalObjectIdCounter {
 

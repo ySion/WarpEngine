@@ -24,25 +24,9 @@ template<class T> using MBTreeMutiSet = phmap::btree_multiset<T, phmap::Less<T>,
 
 template<class T, class T2> using MBTreeMutiMap = phmap::btree_multimap<T, T2, phmap::Less<T>, mi_stl_allocator<T>>;
 
-
-template<class T>
-class MVector : public std::vector<T, mi_stl_allocator<T>> {
-public:
-	template<class ...Args>
-	MVector(Args&& ...args) : std::vector<T, mi_stl_allocator<T>>(std::forward<Args>(args)...) {}
-
-	operator std::vector<T>() {
-		return std::vector(this->begin(), this->end());
-	}
-
-	constexpr uint32_t size_u32() const {
-		return static_cast<uint32_t>(std::vector<T, mi_stl_allocator<T>>::size());
-	}
-};
-
 class MString;
 
-using MStringList = MVector<MString>;
+using MStringList = std::vector<MString>;
 
 
 class MString : public std::basic_string<char, std::char_traits<char>, mi_stl_allocator<char>> {
@@ -79,7 +63,7 @@ public:
 
 
 template<class T> class mstack {
-	MVector<T> m_data{};
+	std::vector<T> m_data{};
 	size_t stack_top = 0;
 public:
 

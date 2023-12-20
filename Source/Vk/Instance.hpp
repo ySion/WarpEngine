@@ -1,16 +1,19 @@
 #pragma once 
 #include "Vk/VkBase.hpp"
 #include "Core/Inherit.hpp"
-#include "Core/Exception.hpp"
+#include "Core/TypeName.hpp"
+
+WARP_TYPE_NAME_2(Gpu, Instance)
+WARP_TYPE_NAME_2(Gpu, PhysicalDevice)
 
 namespace Warp::Gpu {
 
-	class Instance;
+	using Names = std::vector<const char*>;
 
 	class PhysicalDevice : public Inherit<PhysicalDevice, Object> {
 	public:
 
-		using QueueFamilyProperties = MVector<VkQueueFamilyProperties>;
+		using QueueFamilyProperties = std::vector<VkQueueFamilyProperties>;
 
 		PhysicalDevice(VkPhysicalDevice physicalDevice, Instance* instance);
 
@@ -44,22 +47,7 @@ namespace Warp::Gpu {
 
 		inline VkPhysicalDeviceDescriptorIndexingProperties get_descriptor_indexing_properties() const { return _descriptorIndexingProperties; }
 
-		inline bool is_queue_family0_support_all_queue() const {
-
-			if (!_queueFamilyProperties.empty()) {
-				return false;
-			}
-
-			// check if queue family 0 support all type
-			if (_queueFamilyProperties[0].queueFlags & VK_QUEUE_GRAPHICS_BIT &&
-				_queueFamilyProperties[0].queueFlags & VK_QUEUE_COMPUTE_BIT &&
-				_queueFamilyProperties[0].queueFlags & VK_QUEUE_TRANSFER_BIT) {
-			} else {
-				return false;
-			}
-
-			return true;
-		}
+		bool is_queue_family0_support_all_queue() const;
 
 	private:
 		Instance* _instance{};
@@ -71,6 +59,7 @@ namespace Warp::Gpu {
 		VkPhysicalDeviceFeatures2 _features2{};
 
 		VkPhysicalDeviceProperties2 _properties2{};
+
 
 		VkPhysicalDeviceMemoryProperties2 _memoryProperties2{};
 
@@ -92,9 +81,9 @@ namespace Warp::Gpu {
 	class Instance : public Inherit<Instance, Object> {
 	public:
 
-		using PhysicalDevices = MVector<own_ptr<PhysicalDevice>>;
+		using PhysicalDevices = std::vector<std::unique_ptr<PhysicalDevice>>;
 
-		Instance(const MVector<const char*>& extensions = {}, const MVector<const char*>& layers = {});
+		Instance(const std::vector<const char*>& extensions = {}, const std::vector<const char*>& layers = {});
 
 		inline ~Instance() override { if (_instance) vkDestroyInstance(_instance, nullptr); }
 
@@ -108,14 +97,11 @@ namespace Warp::Gpu {
 
 		static bool is_layer_support(const char* extension_name);
 
-	private:
+	protected:
 
 		VkInstance _instance{};
 
-		VkPhysicalDevice _physicalDevice{};
-
-		PhysicalDevices _physicalDevices;
-
+		PhysicalDevices _physicalDevices{};
 	};
 
 }

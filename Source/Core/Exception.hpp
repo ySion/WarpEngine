@@ -1,10 +1,9 @@
 #pragma once
 #include "MIStl.h"
 
-namespace Warp{
-
+namespace Warp {
 	struct Exception {
 		MString message;
 		int code;
 	};
-}
+};

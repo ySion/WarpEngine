@@ -52,8 +52,6 @@ set(ONCE
 
 	"Graphics/VulkanFiles.h"
 
-
-
 	"Graphics/GPUResource/GPUSwapChain.h" 
 	"Graphics/GPUResource/GPUSwapChain.cpp" 
 
@@ -182,24 +180,66 @@ set(ONCE
 	"Core/Input.hpp"
 
 	"Core/TypeName.hpp"
-
-	"Core/own_ptr.hpp"
-	"Core/observer_ptr.hpp"
-
-	"Core/Modifier.cpp"
-	"Core/Modifier.hpp"
+	"Core/Visitor.cpp"
+	"Core/Visitor.hpp"
 
 	"Vk/Vma/vma.h"
 	"Vk/Vma/vma.cpp"
+	"Vk/VkBase.hpp"
+
+	"Vk/Context.hpp"
+	"Vk/Context.cpp"
+
+	"Vk/Instance.hpp"
+	"Vk/Instance.cpp"
+
+	"Vk/Queue.hpp"
+	"Vk/Queue.cpp"
+
 	"Vk/Device.hpp"
 	"Vk/Device.cpp"
 
-	"Vk/VkBase.hpp"
-	"Vk/Instance.hpp"
-	"Vk/Context.hpp"
+	"Vk/CommandPool.hpp"
+	"Vk/CommandPool.cpp"
+
+	"Vk/CommandBuffer.hpp"
+	"Vk/CommandBuffer.cpp"
+
+	"Vk/SwapChain.cpp"
+	"Vk/SwapChain.hpp"
+
+	"Vk/Window.hpp"
+	"Vk/Window.cpp"
+
+	"Vk/CommandSubmitQueue.hpp"
+	"Vk/CommandSubmitQueue.cpp"
+
+	"Vk/RenderPass.hpp"
+	"Vk/RenderPass.cpp"
+
+	"Vk/GlslCompiler.cpp"
+	"Vk/GlslCompiler.hpp"
+	
+	"Vk/GraphicsPipeline.cpp"
+	"Vk/GraphicsPipeline.hpp"
+
+	"VK/GraphicsPipelineState.hpp"
+	"Vk/GraphicsPipelineState.cpp"
+
+	"VK/DescriptorSetLayout.hpp"
+	"VK/DescriptorSetLayout.cpp"
+
+	"Events/WindowEvent.hpp"
+	"Events/WindowEvent.cpp"
+
+	"Engine/Window.hpp"
+	"Engine/Window.cpp"
+
+	"Engine/Window.cpp"
+	"Engine/Window.cpp"
 
 	"NewMain.cpp"
-  "Vk/Instance.cpp")
+ )
 add_executable(WarpEngine ${WpEngine})
 add_definitions(${LLVM_DEFINITIONS})
 
@@ -227,14 +267,14 @@ target_link_libraries(WarpEngine PRIVATE
     Taskflow::Taskflow
     TBB::tbb
     glslang::OSDependent glslang::glslang glslang::MachineIndependent glslang::GenericCodeGen glslang::glslang-default-resource-limits glslang::OGLCompiler glslang::SPVRemapper glslang::SPIRV glslang::HLSL
-    ${mmg_LIBS}
+   # ${mmg_LIBS}
     ${clipper2_LIBS}
-    ${iwasm_LIBS}
+   # ${iwasm_LIBS}
     ${llvm_libs}
     MLIRIR
-    spirv-cross-core
-    spirv-cross-glsl
-    spirv-cross-reflect
+   # spirv-cross-core
+   # spirv-cross-glsl
+   # spirv-cross-reflect
     SDL3::SDL3
     volk::volk
     unofficial::lmdb::lmdb

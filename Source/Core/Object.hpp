@@ -7,13 +7,13 @@
 #include "Auxiliary.hpp"
 #include "MIStl.h"
 
+WARP_TYPE_NAME(Object);
+
 namespace Warp {
 
-	class Modifier;
+	class Visitor;
 	class Input;
 	class Output;
-
-	WARP_TYPE_NAME(Object);
 
 	class Object {
 	public:
@@ -54,9 +54,9 @@ namespace Warp {
 
 		virtual void read(Input& output){};
 
-		virtual void accept(Modifier* modifier);
+		virtual void accept(Visitor* modifier);
 
-		virtual void traverse(Modifier* modifier) {}
+		virtual void traverse(Visitor* modifier) {}
 
 		void* operator new(size_t size);
 

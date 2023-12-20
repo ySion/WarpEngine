@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Core/Allocator.hpp"
+
 namespace Warp {
 
 	template<typename T> class observer_ptr {
@@ -61,6 +63,9 @@ namespace Warp {
 			return _ptr != nullptr && _id != static_cast<uint64_t>(-1);
 		}
 
+		operator T*() const noexcept {
+			return _ptr;
+		}
 
 		T* get() const { return _ptr; }
 		T* operator->() const { return _ptr; }

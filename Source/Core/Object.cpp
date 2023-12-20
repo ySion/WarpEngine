@@ -2,7 +2,7 @@
 
 #include "Object.hpp"
 #include "Allocator.hpp"
-#include "Modifier.hpp"
+#include "Visitor.hpp"
 
 Warp::Object::Object(): _id(AllocatorGlobalObjectIdCounter::get()) {}
 
@@ -29,6 +29,6 @@ Warp::Auxiliary* Warp::Object::get_or_create_auxiliary() noexcept
 	return _auxiliary.get();
 }
 
-void Warp::Object::accept(Modifier* modif) {
+void Warp::Object::accept(Visitor* modif) {
 	modif->apply(this);
 }
