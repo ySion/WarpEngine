@@ -46,7 +46,7 @@ SwapChain::SwapChain(Window* window) : _window(window)
 	};
 
 	if(VkResult res = vkCreateSwapchainKHR(*ctx->get_device(), &sp_ci, nullptr, &_swap_chain); res != VK_SUCCESS) {
-		MString err_msg = MString::format("Failed to create swap chain: {}.", (int)res);
+		MString err_msg = MString::format("Failed to create swap chain: {}, {}.", (int)res, msg_map_VkResult(res));
 		error(err_msg);
 		throw Exception(err_msg, 0);
 	}

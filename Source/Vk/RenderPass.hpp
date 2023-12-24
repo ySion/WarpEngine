@@ -64,7 +64,7 @@ namespace Warp::Gpu {
 			_depth_att.reset();
 		}
 
-		void compile();
+		VkResult compile();
 
 	private:
 		Device* _device;

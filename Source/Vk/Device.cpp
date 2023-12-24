@@ -40,7 +40,7 @@ Gpu::Device::Device(PhysicalDevice* physical_device, const std::vector<const cha
 	//enable all features
 	VkDeviceCreateInfo device_ci{
 		.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-		.pNext = nullptr,
+		.pNext = &features_raytracing,
 		.flags = 0,
 		.queueCreateInfoCount = 1,
 		.pQueueCreateInfos = &queue_ci,
@@ -102,7 +102,7 @@ Gpu::Device::Device(PhysicalDevice* physical_device, const std::vector<const cha
 	vma_ci.pVulkanFunctions = &vma_vulkan_func;
 
 	if (VkResult res = vmaCreateAllocator(&vma_ci, &_allocator); res != VK_SUCCESS) {
-		MString mstring = MString::format("Failed to create VMA allocator.");
+		MString mstring = MString::format("Failed to create VMA allocator: {}, {}.", (int)res, msg_map_VkResult(res));
 		error(mstring);
 		throw Exception{ mstring, res };
 	}else

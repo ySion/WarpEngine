@@ -13,15 +13,18 @@ namespace Warp::Gpu {
 	class GraphicsPipeline : public Inherit<GraphicsPipeline, Object> {
 	public:
 		GraphicsPipeline(Device* device, GraphicsPipelineState * state, RenderPass * renderpass, PipelineLayout * layout);
+
 		~GraphicsPipeline() override;
 
-		VkPipeline vk() const { return _pipeline; }
+		inline Device* get_device() const { return _device; }
+
+		inline VkPipeline vk() const { return _pipeline; }
 
 		operator VkPipeline() const { return _pipeline; }
 
 	private:
-
 		VkPipeline _pipeline {};
+
 		Device* _device{};
 	};
 }

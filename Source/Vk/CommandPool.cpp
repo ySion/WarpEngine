@@ -35,7 +35,7 @@ Gpu::CommandBuffer* Gpu::CommandPool::allocate(VkCommandBufferLevel level)
 	VkCommandBuffer buffer{};
 
 	if (const auto res = vkAllocateCommandBuffers(*_device, &cb_ci, &buffer); res != VK_SUCCESS) {
-		MString message = MString::format("Allocator Command Buffer Faield, code: {}.", static_cast<int>(res));
+		MString message = MString::format("Allocator Command Buffer Faield, code: {}, {}.", static_cast<int>(res), msg_map_VkResult(res));
 		error(message);
 		throw Exception{ message, res };
 	}

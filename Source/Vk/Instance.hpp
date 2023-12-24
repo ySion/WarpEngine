@@ -25,27 +25,27 @@ namespace Warp::Gpu {
 
 		inline operator VkPhysicalDevice() const { return _physicalDevice; }
 
-		inline QueueFamilyProperties get_queue_family_properties() const { return _queueFamilyProperties; }
+		inline QueueFamilyProperties& get_queue_family_properties() { return _queueFamilyProperties; }
 
-		inline VkPhysicalDeviceFeatures2 get_features2() const { return _features2; }
+		inline VkPhysicalDeviceFeatures2& get_features2() { return _features2; }
 
-		inline VkPhysicalDeviceProperties2 get_properties2() const { return _properties2; }
+		inline VkPhysicalDeviceProperties2& get_properties2() { return _properties2; }
 
-		inline VkPhysicalDeviceMemoryProperties2 get_memory_properties2() const { return _memoryProperties2; }
+		inline VkPhysicalDeviceMemoryProperties2& get_memory_properties2() { return _memoryProperties2; }
 
-		inline VkPhysicalDeviceRayTracingPipelinePropertiesKHR get_ray_tracing_pipeline_properties() const { return _rayTracingPipelineProperties; }
+		inline VkPhysicalDeviceRayTracingPipelinePropertiesKHR& get_ray_tracing_pipeline_properties() { return _rayTracingPipelineProperties; }
 
-		inline VkPhysicalDeviceAccelerationStructurePropertiesKHR get_acceleration_structure_properties() const { return _accelerationStructureProperties; }
+		inline VkPhysicalDeviceAccelerationStructurePropertiesKHR& get_acceleration_structure_properties() { return _accelerationStructureProperties; }
 
-		inline VkPhysicalDeviceRayTracingPipelineFeaturesKHR get_ray_tracing_features() const { return _rayTracingFeatures; }
+		inline VkPhysicalDeviceRayTracingPipelineFeaturesKHR& get_ray_tracing_features() { return _rayTracingFeatures; }
 
-		inline VkPhysicalDeviceAccelerationStructureFeaturesKHR get_acceleration_structure_features() const { return _accelerationStructureFeatures; }
+		inline VkPhysicalDeviceAccelerationStructureFeaturesKHR& get_acceleration_structure_features() { return _accelerationStructureFeatures; }
 
-		inline VkPhysicalDeviceBufferDeviceAddressFeatures get_buffer_device_address_features() const { return _bufferDeviceAddressFeatures; }
+		inline VkPhysicalDeviceBufferDeviceAddressFeatures& get_buffer_device_address_features() { return _bufferDeviceAddressFeatures; }
 
-		inline VkPhysicalDeviceDescriptorIndexingFeatures get_descriptor_indexing_features() const { return _descriptorIndexingFeatures; }
+		inline VkPhysicalDeviceDescriptorIndexingFeatures& get_descriptor_indexing_features() { return _descriptorIndexingFeatures; }
 
-		inline VkPhysicalDeviceDescriptorIndexingProperties get_descriptor_indexing_properties() const { return _descriptorIndexingProperties; }
+		inline VkPhysicalDeviceDescriptorIndexingProperties& get_descriptor_indexing_properties() { return _descriptorIndexingProperties; }
 
 		bool is_queue_family0_support_all_queue() const;
 

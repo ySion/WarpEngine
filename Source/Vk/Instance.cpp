@@ -37,7 +37,7 @@ Gpu::PhysicalDevice::PhysicalDevice(VkPhysicalDevice physicalDevice, Instance* i
 	_bufferDeviceAddressFeatures.pNext = &_descriptorIndexingFeatures;
 
 	_descriptorIndexingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
-	_descriptorIndexingFeatures.pNext = &_descriptorIndexingProperties;
+	_descriptorIndexingFeatures.pNext = nullptr;
 
 	vkGetPhysicalDeviceFeatures2(_physicalDevice, &_features2);
 
@@ -118,7 +118,7 @@ Gpu::Instance::Instance(const std::vector<const char*>& extensions, const std::v
 	};
 
 	if (VkResult res = vkCreateInstance(&createInfo, nullptr, &_instance); res != VK_SUCCESS) {
-		error("Failed to create Vulkan instance: {}", (int)res);
+		error("Failed to create Vulkan instance: {}, {}.", static_cast<int>(res), msg_map_VkResult(res));
 		throw Exception{ "Failed to create instance", res };
 	}else {
 		info("Vulkan instance created");

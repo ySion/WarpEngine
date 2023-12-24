@@ -57,7 +57,7 @@ GraphicsPipeline::GraphicsPipeline(Device* device, GraphicsPipelineState* state,
 	};
 
 	if(VkResult res = vkCreateGraphicsPipelines(*device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &_pipeline); res != VK_SUCCESS) {
-		MString msg = MString::format("Failed to create graphics pipeline: {}.", static_cast<int>(res));
+		MString msg = MString::format("Failed to create graphics pipeline: {}, {}.", static_cast<int>(res), msg_map_VkResult(res));
 		error(msg);
 		throw Exception{ msg, res };
 	}else {

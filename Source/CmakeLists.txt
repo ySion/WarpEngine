@@ -185,7 +185,9 @@ set(ONCE
 
 	"Vk/Vma/vma.h"
 	"Vk/Vma/vma.cpp"
+
 	"Vk/VkBase.hpp"
+	"Vk/VkBase.cpp"
 
 	"Vk/Context.hpp"
 	"Vk/Context.cpp"
@@ -228,6 +230,27 @@ set(ONCE
 
 	"VK/DescriptorSetLayout.hpp"
 	"VK/DescriptorSetLayout.cpp"
+
+	"VK/PipelineLayout.hpp"
+	"VK/PipelineLayout.cpp"
+
+	"Vk/DescriptorPool.hpp"
+	"Vk/DescriptorPool.cpp"
+
+	"Vk/DescriptorSet.hpp"
+	"Vk/DescriptorSet.cpp"
+
+	"Vk/ImageView.hpp"
+	"Vk/ImageView.cpp"
+
+	"Vk/Buffer.hpp"
+	"Vk/Buffer.cpp"
+
+	"Vk/Image.hpp"
+	"Vk/Image.cpp"
+
+	"Vk/ShaderModule.hpp"
+	"Vk/ShaderModule.cpp"
 
 	"Events/WindowEvent.hpp"
 	"Events/WindowEvent.cpp"

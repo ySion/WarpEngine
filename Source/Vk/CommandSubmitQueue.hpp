@@ -24,6 +24,9 @@ namespace Warp::Gpu {
 		inline void next_command_buffer() {
 			_current_command_buffer_index = (_current_command_buffer_index + 1) % _max_command_buffer;
 		}
+
+		inline Device* get_device() const { return _device; }
+
 	private:
 		std::unique_ptr<CommandPool> _commandPool {};
 
@@ -34,5 +37,7 @@ namespace Warp::Gpu {
 		uint8_t _max_command_buffer {};
 
 		Queue* _queue{};
+
+		Device* _device{};
 	};
 }

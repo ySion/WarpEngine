@@ -5,8 +5,17 @@
 using namespace Warp::Gpu;
 
 RenderPass::RenderPass(Device* device) : _device{ device }
+{}
+
+RenderPass::~RenderPass() {
+	if (_render_pass != VK_NULL_HANDLE) {
+		vkDestroyRenderPass(*_device, _render_pass, nullptr);
+	}
+}
+
+VkResult RenderPass::compile()
 {
-	std::vector<VkAttachmentDescription> attachments { _input_att.size() + _color_att.size() + _resolve_att.size() + (_depth_att.has_value() ? 1 : 0) };
+	std::vector<VkAttachmentDescription> attachments{ _input_att.size() + _color_att.size() + _resolve_att.size() + (_depth_att.has_value() ? 1 : 0) };
 
 	std::vector<VkAttachmentReference> input_ref{ _input_att.size() };
 	std::vector<VkAttachmentReference> color_ref{ _color_att.size() };
@@ -28,7 +37,7 @@ RenderPass::RenderPass(Device* device) : _device{ device }
 			.initialLayout = ctx.initial_layout,
 			.finalLayout = ctx.final_layout
 		};
-		
+
 		input_ref[i] = {
 			.attachment = att_idx,
 			.layout = ctx.ref_layout
@@ -60,7 +69,7 @@ RenderPass::RenderPass(Device* device) : _device{ device }
 		att_idx++;
 	}
 
-	if(_depth_att.has_value()) {
+	if (_depth_att.has_value()) {
 		auto& val = _depth_att.value();
 		attachments[att_idx] = {
 			.flags = 0,
@@ -139,19 +148,11 @@ RenderPass::RenderPass(Device* device) : _device{ device }
 		.pDependencies = &dependency
 	};
 
-	if(VkResult r = vkCreateRenderPass(device->vk(), &rp_ci, nullptr, &_render_pass); r != VK_SUCCESS) {
-		MString msg = MString::format("Failed to create render pass: %s", static_cast<int>(r));
+	if (VkResult r = vkCreateRenderPass(*_device, &rp_ci, nullptr, &_render_pass); r != VK_SUCCESS) {
+		MString msg = MString::format("Failed to create render pass: {}, {}.", static_cast<int>(r) , msg_map_VkResult(r));
 		error(msg);
-		throw Exception{msg, r};
+		return r;
 	}
-}
-
-RenderPass::~RenderPass() {
-	if (_render_pass != VK_NULL_HANDLE) {
-		vkDestroyRenderPass(*_device, _render_pass, nullptr);
-	}
-}
-
-void RenderPass::compile()
-{
+	info("Render Pass Create Success");
+	return VK_SUCCESS;
 }
