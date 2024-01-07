@@ -44,7 +44,7 @@ namespace Warp::Gpu{
 
 		VkDescriptorBindingFlags _flags{};
 
-		std::vector<VkDescriptorSetLayoutBinding> _bindings {};
+		MVector<VkDescriptorSetLayoutBinding> _bindings {};
 	};
 
 }

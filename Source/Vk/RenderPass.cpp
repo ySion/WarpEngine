@@ -15,11 +15,11 @@ RenderPass::~RenderPass() {
 
 VkResult RenderPass::compile()
 {
-	std::vector<VkAttachmentDescription> attachments{ _input_att.size() + _color_att.size() + _resolve_att.size() + (_depth_att.has_value() ? 1 : 0) };
+	MVector<VkAttachmentDescription> attachments{ _input_att.size() + _color_att.size() + _resolve_att.size() + (_depth_att.has_value() ? 1 : 0) };
 
-	std::vector<VkAttachmentReference> input_ref{ _input_att.size() };
-	std::vector<VkAttachmentReference> color_ref{ _color_att.size() };
-	std::vector<VkAttachmentReference> resolve_ref{ _resolve_att.size() };
+	MVector<VkAttachmentReference> input_ref{ _input_att.size() };
+	MVector<VkAttachmentReference> color_ref{ _color_att.size() };
+	MVector<VkAttachmentReference> resolve_ref{ _resolve_att.size() };
 	VkAttachmentReference depth_ref{};
 
 	uint32_t att_idx = 0;

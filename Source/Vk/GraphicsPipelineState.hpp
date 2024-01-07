@@ -20,7 +20,8 @@ namespace Warp::Gpu {
 			VkShaderModule shaderModule,
 			const char* entryPointName = "main",
 			const VkSpecializationInfo* specializationInfo = nullptr,
-			VkPipelineShaderStageCreateFlags flags = 0) {
+			VkPipelineShaderStageCreateFlags flags = 0)
+		{
 			VkPipelineShaderStageCreateInfo pipelineShaderStageCreateInfo{};
 			pipelineShaderStageCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 			pipelineShaderStageCreateInfo.stage = stage;
@@ -33,8 +34,8 @@ namespace Warp::Gpu {
 		}
 
 		inline GraphicsPipelineState& set_vertex_input(
-				const std::vector<VkVertexInputBindingDescription>& vertexBindingDescriptions,
-				const std::vector<VkVertexInputAttributeDescription>& vertexAttributeDescriptions,
+				const MVector<VkVertexInputBindingDescription>& vertexBindingDescriptions,
+				const MVector<VkVertexInputAttributeDescription>& vertexAttributeDescriptions,
 				VkPipelineVertexInputStateCreateFlags flags = 0) {
 			_vertex_binding_descriptions = vertexBindingDescriptions;
 			_vertex_attribute_descriptions = vertexAttributeDescriptions;
@@ -132,7 +133,7 @@ namespace Warp::Gpu {
 			return *this;
 		}
 
-		std::vector<VkPipelineShaderStageCreateInfo> _shader_stage_cis{};
+		MVector<VkPipelineShaderStageCreateInfo> _shader_stage_cis{};
 		VkPipelineVertexInputStateCreateInfo _vertex_input_ci{ .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO };
 		VkPipelineInputAssemblyStateCreateInfo _input_assembly_ci{ .sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO };
 		VkPipelineTessellationStateCreateInfo _tessellation_ci{ .sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO };
@@ -142,9 +143,9 @@ namespace Warp::Gpu {
 		VkPipelineColorBlendStateCreateInfo _color_blend_ci{ .sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO };
 		VkPipelineDynamicStateCreateInfo _dynamic_ci{ .sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO };
 	private:
-		std::vector<VkVertexInputBindingDescription> _vertex_binding_descriptions{};
-		std::vector<VkVertexInputAttributeDescription> _vertex_attribute_descriptions{};
-		std::vector<VkPipelineColorBlendAttachmentState> _color_blend_attachments{};
-		std::vector<VkDynamicState> _dynamic_states{};
+		MVector<VkVertexInputBindingDescription> _vertex_binding_descriptions{};
+		MVector<VkVertexInputAttributeDescription> _vertex_attribute_descriptions{};
+		MVector<VkPipelineColorBlendAttachmentState> _color_blend_attachments{};
+		MVector<VkDynamicState> _dynamic_states{};
 	};
 }

@@ -13,7 +13,7 @@ namespace Warp::Gpu {
 	class Device : public Inherit<Device, Object> {
 	public:
 
-		Device(PhysicalDevice* physical_device, const std::vector<const char*>& device_extension);
+		Device(PhysicalDevice* physical_device, const MVector<const char*>& device_extension);
 
 		inline ~Device() override {
 			vmaDestroyAllocator(_allocator);

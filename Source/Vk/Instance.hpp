@@ -8,12 +8,12 @@ WARP_TYPE_NAME_2(Gpu, PhysicalDevice)
 
 namespace Warp::Gpu {
 
-	using Names = std::vector<const char*>;
+	using Names = MVector<const char*>;
 
 	class PhysicalDevice : public Inherit<PhysicalDevice, Object> {
 	public:
 
-		using QueueFamilyProperties = std::vector<VkQueueFamilyProperties>;
+		using QueueFamilyProperties = MVector<VkQueueFamilyProperties>;
 
 		PhysicalDevice(VkPhysicalDevice physicalDevice, Instance* instance);
 
@@ -47,6 +47,10 @@ namespace Warp::Gpu {
 
 		inline VkPhysicalDeviceDescriptorIndexingProperties& get_descriptor_indexing_properties() { return _descriptorIndexingProperties; }
 
+		inline VkPhysicalDeviceVulkan11Features& get_vulkan11_features() { return _vulkan11Features; }
+
+		inline VkPhysicalDeviceVulkan11Properties& get_vulkan11_properties() { return _vulkan11Properties; }
+
 		bool is_queue_family0_support_all_queue() const;
 
 	private:
@@ -76,14 +80,18 @@ namespace Warp::Gpu {
 		VkPhysicalDeviceDescriptorIndexingFeatures _descriptorIndexingFeatures{};
 
 		VkPhysicalDeviceDescriptorIndexingProperties _descriptorIndexingProperties{};
+
+		VkPhysicalDeviceVulkan11Features _vulkan11Features{};
+
+		VkPhysicalDeviceVulkan11Properties _vulkan11Properties{};
 	};
 
 	class Instance : public Inherit<Instance, Object> {
 	public:
 
-		using PhysicalDevices = std::vector<std::unique_ptr<PhysicalDevice>>;
+		using PhysicalDevices = MVector<std::unique_ptr<PhysicalDevice>>;
 
-		Instance(const std::vector<const char*>& extensions = {}, const std::vector<const char*>& layers = {});
+		Instance(const MVector<const char*>& extensions = {}, const MVector<const char*>& layers = {});
 
 		inline ~Instance() override { if (_instance) vkDestroyInstance(_instance, nullptr); }
 

@@ -1,4 +1,4 @@
-#version 460 core
+﻿#version 460 core
 
 //nonuniformEXT
 #extension GL_EXT_nonuniform_qualifier : require
@@ -12,8 +12,6 @@ layout (location = 4) in vec2 ouv;
 layout(location = 5) flat in uint drawID;
 
 layout (location = 0) out vec4 outColor;
-
-
 
 layout(set = 0, binding = 0)uniform sampler2D global_textures[];
 layout(set = 0, binding = 0)uniform usampler2D global_textures_uint[];
@@ -41,6 +39,7 @@ layout(set = 3, binding = 0) buffer ObjectParameters {
 void main(){
 	
 	vec2 texCoord = view_normal.xy * 0.5 + 0.5;
+	double t = 5*5;
 	vec3 color = texture(global_textures[nonuniformEXT(drawID)], texCoord).rgb;
 
 	outColor = vec4(color, 1.0);

@@ -39,7 +39,7 @@ namespace Warp::Gpu {
 	private:
 		Device* _device;
 		VkPipelineLayout _pipelineLayout {};
-		std::vector<VkDescriptorSetLayout> _setLayouts;
-		std::vector<VkPushConstantRange> _pushConstantRanges;
+		MVector<VkDescriptorSetLayout> _setLayouts;
+		MVector<VkPushConstantRange> _pushConstantRanges;
 	};
 }

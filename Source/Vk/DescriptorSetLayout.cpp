@@ -18,7 +18,7 @@ DescriptorSetLayout::~DescriptorSetLayout() {
 
 VkResult DescriptorSetLayout::compile() {
 
-	std::vector binding_flags(_bindings.size(), _flags);
+	MVector<VkDescriptorBindingFlags> binding_flags(_bindings.size(), _flags);
 
 	VkDescriptorSetLayoutBindingFlagsCreateInfo flag_ci = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO,

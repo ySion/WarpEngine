@@ -5,7 +5,7 @@
 
 using namespace Warp;
 
-Gpu::Device::Device(PhysicalDevice* physical_device, const std::vector<const char*>& device_extension) {
+Gpu::Device::Device(PhysicalDevice* physical_device, const MVector<const char*>& device_extension) {
 
 
 	auto pproperties = physical_device->get_properties2();

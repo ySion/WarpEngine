@@ -73,12 +73,12 @@ namespace Warp {
 
 		auto operator<=>(const observer_ptr&) const noexcept = default;
 
-		static bool is_ptr_vaild(T* ptr) noexcept {
+		static inline bool is_ptr_vaild(T* ptr) noexcept {
 			if (ptr) { return Allocator<T>::get_instance()->is_ptr_vaild(ptr); }
 			return false;
 		}
 
-		static bool is_object_vaild(T* ptr, uint64_t id) noexcept {
+		static inline bool is_object_vaild(T* ptr, uint64_t id) noexcept {
 			if (ptr && id != static_cast<uint64_t>(-1)) { return Allocator<T>::get_instance()->is_object_vaild(ptr, id); }
 			return false;
 		}

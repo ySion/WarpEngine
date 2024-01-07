@@ -47,6 +47,6 @@ namespace Warp::Gpu {
 
 		VmaAllocation _allocation{};
 		
-		std::vector<std::unique_ptr<ImageView>> _image_views {};
+		MVector<std::unique_ptr<ImageView>> _image_views {};
 	};
 }

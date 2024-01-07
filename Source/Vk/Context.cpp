@@ -7,12 +7,12 @@
 using namespace Warp::Gpu;
 
 Context::Context() {
-	std::vector<const char*> instance_extensions{
+	MVector<const char*> instance_extensions{
 		"VK_KHR_surface",
 		"VK_KHR_win32_surface"
 	};
 
-	std::vector<const char*> instance_layers{
+	MVector<const char*> instance_layers{
 		"VK_LAYER_KHRONOS_validation"
 	};
 
@@ -34,11 +34,12 @@ Context::Context() {
 		throw Exception{ error_msg, 0 };
 	}
 
-	std::vector device_extension_names = {
+	MVector device_extension_names = {
 		"VK_KHR_swapchain",
 		"VK_KHR_get_memory_requirements2",
 		"VK_KHR_dedicated_allocation",
-		"VK_KHR_bind_memory2"
+		"VK_KHR_bind_memory2",
+		"VK_KHR_spirv_1_4"
 	};
 
 	_device = std::make_unique<Device>(physical_device_ptr.get(), device_extension_names);
@@ -129,7 +130,7 @@ std::unique_ptr<GraphicsPipeline> Context::create_graphics_pipeline(GraphicsPipe
 	}
 }
 
-std::unique_ptr<ShaderModule> Context::create_shader_module(const std::vector<uint8_t>& spirv) const {
+std::unique_ptr<ShaderModule> Context::create_shader_module(const MVector<uint32_t>& spirv) const {
 	try {
 		return std::make_unique<ShaderModule>(_device.get(), spirv);
 	} catch (const Exception& e) {

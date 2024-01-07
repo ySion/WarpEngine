@@ -30,7 +30,7 @@ namespace Warp::Gpu {
 	private:
 		std::unique_ptr<CommandPool> _commandPool {};
 
-		std::vector<CommandBuffer*> _command_buffers {};
+		MVector<CommandBuffer*> _command_buffers {};
 
 		uint8_t _current_command_buffer_index {};
 

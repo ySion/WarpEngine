@@ -5,7 +5,7 @@
 
 #include "TypeName.hpp"
 #include "Auxiliary.hpp"
-#include "MIStl.h"
+#include "Collection.hpp"
 
 WARP_TYPE_NAME(Object);
 
@@ -58,6 +58,10 @@ namespace Warp {
 
 		virtual void traverse(Visitor* modifier) {}
 
+		inline uint64_t get_dirty() const { return dirty; }
+
+		inline uint64_t set_dirty() { dirty += 1; return dirty; }
+
 		void* operator new(size_t size);
 
 		void operator delete(void* ptr);
@@ -65,5 +69,7 @@ namespace Warp {
 		std::unique_ptr<Auxiliary> _auxiliary {};
 
 		uint64_t _id;
+
+		uint64_t dirty = 0;
 	};
 }

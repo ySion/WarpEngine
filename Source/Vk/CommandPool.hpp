@@ -5,7 +5,6 @@
 #include "Device.hpp"
 #include "CommandBuffer.hpp"
 
-#include "Core/MIStl.h"
 #include "Core/Inherit.hpp"
 
 WARP_TYPE_NAME_2(Gpu, CommandPool)
@@ -31,7 +30,7 @@ namespace Warp::Gpu {
 
 		Device* _device{};
 
-		std::vector<std::unique_ptr<CommandBuffer>> _cmd_buffers{};
+		MVector<std::unique_ptr<CommandBuffer>> _cmd_buffers{};
 	};
 
 }

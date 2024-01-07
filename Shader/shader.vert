@@ -14,12 +14,12 @@ vec3 color[] = {
     vec3(0.0, 0.0, 1.0)
 };
 
-layout(push_constant) uniform cts {
-	vec4 c1;
-	vec4 c2;
-	vec4 c3;
-	vec4 c4;
-}PushConstants;
+//layout(push_constant) uniform cts {
+//	vec4 c1;
+//	vec4 c2;
+//	vec4 c3;
+//	vec4 c4;
+//}PushConstants;
 
 void main(){
     gl_Position = vec4(tri[gl_VertexIndex] * 1.0f, 1.0);

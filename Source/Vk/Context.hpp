@@ -22,7 +22,7 @@ WARP_TYPE_NAME_2(Gpu, Context)
 
 namespace Warp::Gpu {
 
-	using Names = std::vector<const char*>;
+	using Names = MVector<const char*>;
 
 	class Context : public Inherit<Context, Object> {
 	public:
@@ -93,7 +93,7 @@ namespace Warp::Gpu {
 
 		std::unique_ptr<GraphicsPipeline> create_graphics_pipeline(GraphicsPipelineState* state, RenderPass* renderpass, PipelineLayout* layout) const;
 
-		std::unique_ptr<ShaderModule> create_shader_module(const std::vector<uint8_t>& spirv) const;
+		std::unique_ptr<ShaderModule> create_shader_module(const MVector<uint32_t>& spirv) const;
 	private:
 		std::unique_ptr<Instance> _instance{};
 

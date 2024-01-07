@@ -4,6 +4,7 @@
 
 #include "Core/Inherit.hpp"
 
+WARP_TYPE_NAME_2(Gpu, ShaderModule);
 
 namespace Warp::Gpu {
 
@@ -11,9 +12,15 @@ namespace Warp::Gpu {
 
 	class ShaderModule : public Inherit<ShaderModule, Object> {
 	public:
-		ShaderModule(Device* device, const std::vector<uint8_t>& spirv);
+		ShaderModule(Device* device, const MVector<uint32_t>& spirv);
 
 		~ShaderModule() override;
+
+		inline Device* get_device() const { return _device; }
+
+		inline VkShaderModule vk() const { return _shader; }
+
+		operator VkShaderModule() const { return _shader; }
 
 	private:
 		VkShaderModule _shader;

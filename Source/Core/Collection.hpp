@@ -1,5 +1,7 @@
 #pragma once
 
+#include <filesystem>
+
 #include "mimalloc.h"
 #include "parallel_hashmap/phmap.h"
 
@@ -24,10 +26,35 @@ template<class T> using MBTreeMutiSet = phmap::btree_multiset<T, phmap::Less<T>,
 
 template<class T, class T2> using MBTreeMutiMap = phmap::btree_multimap<T, T2, phmap::Less<T>, mi_stl_allocator<T>>;
 
+
+
+template<class T>
+class MVector : public std::vector<T, mi_stl_allocator<T>> {
+public:
+	MVector() : std::vector<T, mi_stl_allocator<T>>() {}
+	MVector(std::initializer_list<T> il) : std::vector<T, mi_stl_allocator<T>>(il) {}
+
+	template<class ...Args>
+	MVector(Args&& ...args) : std::vector<T, mi_stl_allocator<T>>(std::forward<Args>(args)...) {}
+
+	uint8_t size_u8() const {
+		return static_cast<uint8_t>(this->size());
+	}
+
+	uint16_t size_u16() const {
+		return static_cast<uint16_t>(this->size());
+	}
+
+	uint32_t size_u32() const {
+		return static_cast<uint32_t>(this->size());
+	}
+};
+
 class MString;
 
-using MStringList = std::vector<MString>;
+using MStringList = MVector<MString>;
 
+using MStringStream = std::basic_stringstream<char, std::char_traits<char>, mi_stl_allocator<char>>;
 
 class MString : public std::basic_string<char, std::char_traits<char>, mi_stl_allocator<char>> {
 public:
@@ -59,52 +86,19 @@ public:
 		std::vformat_to(std::back_inserter(result), str, std::make_format_args(args...));
 		return result;
 	}
+
+	friend size_t hash_value(const MString& p) {
+		return std::_Hash_array_representation(p.c_str(), p.size());
+	}
 };
 
-
-template<class T> class mstack {
-	std::vector<T> m_data{};
-	size_t stack_top = 0;
-public:
-
-	mstack(size_t reserve_size = 64) {
-		m_data.reserve(reserve_size);
+template <>
+struct std::formatter<MString>{
+	constexpr auto parse(std::format_parse_context& ctx) {
+		return ctx.begin();
 	}
 
-	inline void push(const T& item) {
-		if (m_data.size() <= stack_top) {
-			m_data.push_back(item);
-		} else {
-			m_data[stack_top] = item;
-		}
-		stack_top++;
-	}
-
-	constexpr T pop() {
-		if (stack_top <= 0) { return T{}; }
-		stack_top--;
-		return m_data[stack_top];
-	}
-
-	constexpr bool empty() const {
-		return stack_top <= 0;
-	}
-
-	constexpr T top() {
-		if (stack_top > 0) { return m_data[stack_top - 1]; }
-		return T{};
-	}
-
-	constexpr size_t size() const {
-		return stack_top;
-	}
-
-	constexpr void clear() {
-		stack_top = 0;
-		m_data.clear();
-	}
-
-	constexpr void reserve(size_t size) {
-		m_data.reserve(size);
+	template <typename FormatContext> auto format(const MString& str, FormatContext& ctx) const {
+		return std::format_to(ctx.out(), "{}", str.c_str());
 	}
 };

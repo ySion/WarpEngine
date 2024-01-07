@@ -1,303 +1,71 @@
-set(ONCE 
-	"OnceVulkanMain.cpp"
-
-	"Core/Utils.cpp"
-	"Core/Utils.h"
-	"Core/Log.h"
-	"Core/MIStl.h"
-
-	"Core/Object.h"
+set(WpEngine 
 	"Core/Object.cpp"
-
-	"Core/TypeName.hpp"
-
-	"Core/ResourceManager.hpp"
-
-	"Core/Auxiliary.hpp"
-	"Loaders/tiny_obj_loader.h" 
-	"Loaders/tiny_obj_loader.cpp" 
-
-	"Image/image.h"
-	"Image/stb_image.h" 
-	"Image/image.cpp"
-
-	"Graphics/GPUFactory.h"
-	"Graphics/GPUFactory.cpp"
-
-	"Graphics/GPUResource.h"
-	"Graphics/GPUResource.cpp"
-
-	"Graphics/GPUResourceBuilder.h"
-	"Graphics/GPUResourceBuilder.cpp"
-	
-	
-	"Graphics/GPUResourceManager.h" 
-	"Graphics/GPUResourceManager.cpp" 
-
-	"Graphics/GPUHelper.h" 
-	"Graphics/GPUHelper.cpp" 
-
-	"Graphics/GPUShaderCompiler.h" 
-	"Graphics/GPUShaderCompiler.cpp"
-
-	"Graphics/GPUResource/GPUResourceBase.h"
-	"Graphics/GPUResource/GPUResourceBase.cpp"
-
-	"Graphics/GPUResourceHandle.h" 
-
-	"Graphics/Vma/vma.h"
-	"Graphics/Vma/vma.cpp"
-
-	"Graphics/Vma/vk_mem_alloc.h"
-
-	"Graphics/VulkanFiles.h"
-
-	"Graphics/GPUResource/GPUSwapChain.h" 
-	"Graphics/GPUResource/GPUSwapChain.cpp" 
-
-	"Graphics/GPUResource/GPUImage.h" 
-	"Graphics/GPUResource/GPUImage.cpp" 
-
-	"Graphics/GPUResource/GPUFence.h" 
-	"Graphics/GPUResource/GPUFence.cpp" 
-
-	"Graphics/GPUResource/GPUSemaphore.h"
-	"Graphics/GPUResource/GPUSemaphore.cpp" 
-
-	"Graphics/GPUResource/GPUBuffer.h" 
-	"Graphics/GPUResource/GPUBuffer.cpp" 
-
-	"Graphics/GPUResource/GPUFrameBuffer.h"
-	"Graphics/GPUResource/GPUFrameBuffer.cpp"
-
-	"Graphics/GPUResource/GPURenderPass.h"
-	"Graphics/GPUResource/GPURenderPass.cpp"
-
-	"Graphics/GPUResource/GPUGraphicsPipeline.h" 
-	"Graphics/GPUResource/GPUGraphicsPipeline.cpp"
-
-	"Graphics/GPUResource/GPUCommandPool.h"
-	"Graphics/GPUResource/GPUCommandPool.cpp"
-
-	
-	
-
-	"Graphics/GPUResource/GPUShader.h" 
-	"Graphics/GPUResource/GPUShader.cpp"
-
-	"Graphics/GPUResource/GPUDescriptorPool.h"
-	"Graphics/GPUResource/GPUDescriptorPool.cpp"
-
-	"Graphics/GPUResource/GPUPipelineLayout.h"
-	"Graphics/GPUResource/GPUPipelineLayout.cpp"
-
-	"Graphics/GPUResource/GPUDescriptorSetLayout.h" 
-	"Graphics/GPUResource/GPUDescriptorSetLayout.cpp"
-
-	######################################################
-
-	"Graphics/Builder/GPUBufferBuilder.h"
-	"Graphics/Builder/GPUBufferBuilder.cpp"
-
-	"Graphics/Builder/GPUImageBuilder.h" 
-	"Graphics/Builder/GPUImageBuilder.cpp"
-
-	"Graphics/Builder/GPUSwapChainBuilder.h" 
-	"Graphics/Builder/GPUSwapChainBuilder.cpp" 
-
-	"Graphics/Builder/GPUFrameBufferBuilder.h" 
-	"Graphics/Builder/GPUFrameBufferBuilder.cpp"
-
-	"Graphics/Builder/GPUCommandPoolBuilder.h"
-	"Graphics/Builder/GPUCommandPoolBuilder.cpp"
-
-	
-	
-
-	"Graphics/Builder/GPUFenceBuilder.h" 
-	"Graphics/Builder/GPUFenceBuilder.cpp" 
-
-	"Graphics/Builder/GPUSemaphoreBuilder.h"
-	"Graphics/Builder/GPUSemaphoreBuilder.cpp" 
-
-	"Graphics/Builder/GPURenderPassBuilder.h" 
-	"Graphics/Builder/GPURenderPassBuilder.cpp"
-
-	"Graphics/Builder/GPUGraphicsPipelineBuilder.h"
-	"Graphics/Builder/GPUGraphicsPipelineBuilder.cpp"
-
-	"Graphics/Builder/GPUPipelineLayoutBuilder.h"
-	"Graphics/Builder/GPUPipelineLayoutBuilder.cpp"
-
-	"Graphics/Builder/GPUDescriptorPoolBuilder.h"
-	"Graphics/Builder/GPUDescriptorPoolBuilder.cpp"
-
-	"Graphics/Builder/GPUDescriptorSetLayoutBuilder.h" 
-	"Graphics/Builder/GPUDescriptorSetLayoutBuilder.cpp"
-	
-	"Render/RenderResourceGroup.h" 
-	"Render/RenderResourceGroup.cpp" 
-
-	"Render/RenderMachineCore.h"
-	"Render/RenderMachineCore.cpp"
-
-	"Render/RenderResourceSystem.cpp"
-	"Render/RenderResourceSystem.h"
-
-	"Render/RenderTaskGraph.h" 
-	"Render/RenderTaskGraph.cpp" 
-
-	"Render/RenderTaskSystem.h" 
-	"Render/RenderTaskSystem.cpp" 
-
-	"Render/RTGResourceNodes/ResourceBase.h"
-	"Render/RTGResourceNodes/ResourceBase.h"
-
-	"Render/RTGTaskNodes/TaskNodeBase.h" 
-	"Render/RTGTaskNodes/TaskNodeBase.cpp" 
-
-	"Render/RenderSystem.h"
-	"Render/RenderSystem.cpp"
- 	"Render/RenderTaskGraphDomain.h" 
-	"Render/RenderTaskGraphDomain.cpp"  
-	
-	"Render/RenderShaderSystem.h"
-	"Render/RenderShaderSystem.cpp"
-
- "Render/Material/Material.h" "Render/Material/Material.cpp")
-
-
- set(WpEngine 
-	"Core/Object.hpp"
-	"Core/Object.cpp"
-	"Core/Inherit.hpp"
-	"Core/Logger.hpp"
-
-	"Core/Allocator.hpp"
-
-	"Core/Data.hpp"
-	"Core/Output.hpp"
-	"Core/Input.hpp"
-
-	"Core/TypeName.hpp"
+	"Data/Data.cpp"
 	"Core/Visitor.cpp"
-	"Core/Visitor.hpp"
-
-	"Vk/Vma/vma.h"
 	"Vk/Vma/vma.cpp"
-
-	"Vk/VkBase.hpp"
 	"Vk/VkBase.cpp"
-
-	"Vk/Context.hpp"
 	"Vk/Context.cpp"
-
-	"Vk/Instance.hpp"
 	"Vk/Instance.cpp"
-
-	"Vk/Queue.hpp"
 	"Vk/Queue.cpp"
-
-	"Vk/Device.hpp"
 	"Vk/Device.cpp"
-
-	"Vk/CommandPool.hpp"
 	"Vk/CommandPool.cpp"
-
-	"Vk/CommandBuffer.hpp"
 	"Vk/CommandBuffer.cpp"
-
 	"Vk/SwapChain.cpp"
-	"Vk/SwapChain.hpp"
-
-	"Vk/Window.hpp"
 	"Vk/Window.cpp"
-
-	"Vk/CommandSubmitQueue.hpp"
 	"Vk/CommandSubmitQueue.cpp"
-
-	"Vk/RenderPass.hpp"
 	"Vk/RenderPass.cpp"
-
 	"Vk/GlslCompiler.cpp"
-	"Vk/GlslCompiler.hpp"
-	
 	"Vk/GraphicsPipeline.cpp"
-	"Vk/GraphicsPipeline.hpp"
-
-	"VK/GraphicsPipelineState.hpp"
 	"Vk/GraphicsPipelineState.cpp"
-
-	"VK/DescriptorSetLayout.hpp"
 	"VK/DescriptorSetLayout.cpp"
-
-	"VK/PipelineLayout.hpp"
 	"VK/PipelineLayout.cpp"
-
-	"Vk/DescriptorPool.hpp"
 	"Vk/DescriptorPool.cpp"
-
-	"Vk/DescriptorSet.hpp"
 	"Vk/DescriptorSet.cpp"
-
-	"Vk/ImageView.hpp"
 	"Vk/ImageView.cpp"
-
-	"Vk/Buffer.hpp"
 	"Vk/Buffer.cpp"
-
-	"Vk/Image.hpp"
 	"Vk/Image.cpp"
-
-	"Vk/ShaderModule.hpp"
 	"Vk/ShaderModule.cpp"
-
-	"Events/WindowEvent.hpp"
+	"Graphics/RenderStage.cpp"
+	"Graphics/RenderTaskList.cpp"
+	"Graphics/RenderResource.cpp"
 	"Events/WindowEvent.cpp"
-
-	"Engine/Window.hpp"
 	"Engine/Window.cpp"
-
-	"Engine/Window.cpp"
-	"Engine/Window.cpp"
+	
+	"Graphics/MaterialSource.cpp"
+	"Graphics/MaterialInfo.cpp"
+	"Graphics/MaterialParameter.cpp"
+	"Graphics/MaterialShader.cpp"
+	"Data/DataPacketDataStructureDescriptorParser.cpp"
+	"Data/DataPacketDataStructreInfoPack.cpp"
+	"Data/DataPacketDataStructureDescriptor.cpp"
+	"Data/DataPacket.cpp"
 
 	"NewMain.cpp"
- )
+)
+
 add_executable(WarpEngine ${WpEngine})
+
 add_definitions(${LLVM_DEFINITIONS})
 
 target_include_directories(WarpEngine PRIVATE "." 
 	${LLVM_INCLUDE_DIRS}
-	${MLIR_INCLUDE_DIRS}
-	${iwasm_INCLUDE_DIR}
-	${mmg_INCLUDE_DIR}
-	${ktx_INCLUDE_DIR}
 	${PARALLEL_HASHMAP_INCLUDE_DIRS}
+	${mimalloc_INCLUDE_DIR}
 )
+
 llvm_map_components_to_libnames(llvm_libs support core irreader)
-message(status ===================================================================== mlir-headers)
-target_link_libraries(WarpEngine PRIVATE 
-    EnTT::EnTT 
+
+target_link_libraries(WarpEngine PRIVATE
     glm::glm 
-   # Vulkan::Vulkan 
-    mimalloc
+    ${mimalloc_LIBS}
     spdlog::spdlog
     fmt::fmt
     Eigen3::Eigen
-   # glfw
-   # RTTR::Core
-    #unofficial::gainput::gainput
     Taskflow::Taskflow
     TBB::tbb
-    glslang::OSDependent glslang::glslang glslang::MachineIndependent glslang::GenericCodeGen glslang::glslang-default-resource-limits glslang::OGLCompiler glslang::SPVRemapper glslang::SPIRV glslang::HLSL
-   # ${mmg_LIBS}
+    glslang::OSDependent glslang::glslang glslang::MachineIndependent glslang::GenericCodeGen glslang::glslang-default-resource-limits glslang::SPIRV
     ${clipper2_LIBS}
-   # ${iwasm_LIBS}
     ${llvm_libs}
-    MLIRIR
-   # spirv-cross-core
-   # spirv-cross-glsl
-   # spirv-cross-reflect
     SDL3::SDL3
     volk::volk
     unofficial::lmdb::lmdb
@@ -307,3 +75,4 @@ target_precompile_headers(WarpEngine PRIVATE
     #"WarpEngine/WarpMath.hpp"
 )
 
+target_compile_options(WarpEngine PUBLIC "/Zc:__cplusplus")

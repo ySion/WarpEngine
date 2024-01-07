@@ -20,7 +20,6 @@ Gpu::PhysicalDevice::PhysicalDevice(VkPhysicalDevice physicalDevice, Instance* i
 	_queueFamilyProperties.resize(queueFamilyCount);
 	vkGetPhysicalDeviceQueueFamilyProperties(_physicalDevice, &queueFamilyCount, _queueFamilyProperties.data());
 
-	//Get Features
 
 	_features2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
 	_features2.pNext = &_rayTracingFeatures;
@@ -37,9 +36,12 @@ Gpu::PhysicalDevice::PhysicalDevice(VkPhysicalDevice physicalDevice, Instance* i
 	_bufferDeviceAddressFeatures.pNext = &_descriptorIndexingFeatures;
 
 	_descriptorIndexingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
-	_descriptorIndexingFeatures.pNext = nullptr;
+	_descriptorIndexingFeatures.pNext = &_vulkan11Features;
+
+	_vulkan11Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
 
 	vkGetPhysicalDeviceFeatures2(_physicalDevice, &_features2);
+
 
 	//Get Properties
 
@@ -53,7 +55,9 @@ Gpu::PhysicalDevice::PhysicalDevice(VkPhysicalDevice physicalDevice, Instance* i
 	_accelerationStructureProperties.pNext = &_descriptorIndexingProperties;
 
 	_descriptorIndexingProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES;
-	_descriptorIndexingProperties.pNext = nullptr;
+	_descriptorIndexingProperties.pNext = &_vulkan11Properties;
+
+	_vulkan11Properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES;
 
 	_memoryProperties2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2;
 
@@ -80,7 +84,7 @@ bool Gpu::PhysicalDevice::is_queue_family0_support_all_queue() const
 	return true;
 }
 
-Gpu::Instance::Instance(const std::vector<const char*>& extensions, const std::vector<const char*>& layers)
+Gpu::Instance::Instance(const MVector<const char*>& extensions, const MVector<const char*>& layers)
 {
 	volkInitialize();
 
@@ -127,7 +131,7 @@ Gpu::Instance::Instance(const std::vector<const char*>& extensions, const std::v
 	volkLoadInstance(_instance);
 	uint32_t physical_device_count = 0;
 	vkEnumeratePhysicalDevices(_instance,&physical_device_count, nullptr);
-	std::vector<VkPhysicalDevice> physicalDevices{physical_device_count};
+	MVector<VkPhysicalDevice> physicalDevices{physical_device_count};
 	vkEnumeratePhysicalDevices(_instance, &physical_device_count, physicalDevices.data());
 
 	for (const auto& physicalDevice : physicalDevices) {
@@ -140,7 +144,7 @@ bool Gpu::Instance::is_extension_support(const char* extension_name)
 	uint32_t extensionCount = 0;
 	vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
 
-	std::vector<VkExtensionProperties> extensions(extensionCount);
+	MVector<VkExtensionProperties> extensions(extensionCount);
 	vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
 
 	for (const auto& extension : extensions) {
@@ -155,7 +159,7 @@ bool Gpu::Instance::is_layer_support(const char* extension_name)
 	uint32_t layerCount = 0;
 	vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
 
-	std::vector<VkLayerProperties> layers(layerCount);
+	MVector<VkLayerProperties> layers(layerCount);
 	vkEnumerateInstanceLayerProperties(&layerCount, layers.data());
 
 	for (const auto& layer : layers) {

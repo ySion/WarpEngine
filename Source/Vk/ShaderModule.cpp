@@ -7,13 +7,13 @@
 
 using namespace Warp::Gpu;
 
-ShaderModule::ShaderModule(Device* device, const std::vector<uint8_t>& spirv) : _device(device){
+ShaderModule::ShaderModule(Device* device, const MVector<uint32_t>& spirv) : _device(device){
 	const VkShaderModuleCreateInfo ci = {
 		.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.codeSize = to_u32(spirv.size() / sizeof(uint32_t)),
-		.pCode = (uint32_t*)spirv.data()
+		.codeSize = to_u32(spirv.size() * sizeof(uint32_t)),
+		.pCode = spirv.data()
 	};
 
 	VkResult res =  vkCreateShaderModule(*_device, &ci, nullptr, &_shader);

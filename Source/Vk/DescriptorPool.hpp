@@ -36,7 +36,7 @@ namespace Warp::Gpu {
 		Device* _device {};
 		VkDescriptorPool _descriptor_pool {};
 		uint32_t _max_desc_sets {};
-		std::vector<VkDescriptorPoolSize> _pool_sizes {};
-		std::vector<std::unique_ptr<DescriptorSet>> _sets{};
+		MVector<VkDescriptorPoolSize> _pool_sizes {};
+		MVector<std::unique_ptr<DescriptorSet>> _sets{};
 	};
 }

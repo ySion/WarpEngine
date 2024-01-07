@@ -69,9 +69,9 @@ namespace Warp::Gpu {
 	private:
 		Device* _device;
 		VkRenderPass _render_pass;
-		std::vector<AttachmentDescription> _input_att {};
-		std::vector<AttachmentDescription> _color_att {};
-		std::vector<AttachmentDescription> _resolve_att {};
+		MVector<AttachmentDescription> _input_att {};
+		MVector<AttachmentDescription> _color_att {};
+		MVector<AttachmentDescription> _resolve_att {};
 		std::optional<AttachmentDescription> _depth_att {};
 	};
 
