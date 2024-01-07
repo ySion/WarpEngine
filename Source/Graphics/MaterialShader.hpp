@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Inherit.hpp"
+
 WARP_TYPE_NAME_2(Gpu, MaterialShader);
 
 namespace Warp::Gpu {
