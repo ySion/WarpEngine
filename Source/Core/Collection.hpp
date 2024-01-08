@@ -10,10 +10,6 @@
 #include <string>
 #include <format>
 
-template<class T, class T2, class T3 = phmap::priv::hash_default_hash<T>, class T4 = phmap::priv::hash_default_eq<T>> using mmap = phmap::flat_hash_map<T, T2, T3, T4, mi_stl_allocator<T>>;
-
-template<class T, class T2 = phmap::priv::hash_default_hash<T>, class T3 = phmap::priv::hash_default_eq<T>> using mset = phmap::flat_hash_set<T, T2, T3, mi_stl_allocator<T>>;
-
 template<class T, class T2, class T3 = phmap::priv::hash_default_hash<T>, class T4 = phmap::priv::hash_default_eq<T>> using MMap = phmap::flat_hash_map<T, T2, T3, T4, mi_stl_allocator<T>>;
 
 template<class T, class T2, class T3 = phmap::Less<T>> using MBTreeMap = phmap::btree_map<T, T2, T3, mi_stl_allocator<T>>;
@@ -74,6 +70,17 @@ public:
 		}
 		return result;
 	}
+
+	inline MString replace_str(std::string_view from, std::string_view to) const {
+		MString result = *this;
+		size_t start_pos = 0;
+		while ((start_pos = result.find(from, start_pos)) != std::string::npos) {
+			result.replace(start_pos, from.length(), to);
+			start_pos += to.length();
+		}
+		return result;
+	}
+
 
 	inline std::string to_std_string() const {
 		return std::string(this->begin(), this->end());

@@ -15,11 +15,9 @@ namespace Warp::Gpu {
 		Vec2,
 		Vec4,
 		Color,
+		Mat4x4,
 		Texture,
-		Texture3D,
 		TextureCube,
-		Mat3x3,
-		Mat4x4
 	};
 
 	inline Data::DataPacketMemberType material_type_map_to_data_packet_type(MaterialParamterType type) {
@@ -38,8 +36,6 @@ namespace Warp::Gpu {
 			return Data::DataPacketMemberType::Vec4;
 		case MaterialParamterType::Color:
 			return Data::DataPacketMemberType::Vec4;
-		case MaterialParamterType::Mat3x3:
-			return Data::DataPacketMemberType::Mat3x3;
 		case MaterialParamterType::Mat4x4:
 			return Data::DataPacketMemberType::Mat4x4;
 		default:

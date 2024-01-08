@@ -39,7 +39,8 @@ set(WpEngine
 	"Data/DataPacketDataStructreInfoPack.cpp"
 	"Data/DataPacketDataStructureDescriptor.cpp"
 	"Data/DataPacket.cpp"
-
+	"Data/DataUnion.cpp"
+	"Data/DataTypes.cpp"
 	"NewMain.cpp"
 )
 

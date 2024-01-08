@@ -10,7 +10,7 @@ WARP_TYPE_NAME_2(Data, DataBuffer);
 WARP_TYPE_NAME_2(Data, DataBufferVector);
 WARP_TYPE_NAME_2(Data, DataBufferUniformVector);
 WARP_TYPE_NAME_2(Data, DataPacket);
-WARP_TYPE_NAME_2(Data, DataPacketVector);
+//WARP_TYPE_NAME_2(Data, DataPacketVector);
 
 namespace Warp::Data {
 
@@ -19,7 +19,7 @@ namespace Warp::Data {
 
 		/// 不分配内存, 后续可以通过resize来分配
 		/// 默认4字节对齐
-		DataBuffer(int aligment = 4) :_size(0), _aligment(aligment) {}
+		DataBuffer(int aligment = 4) :_size(0), _aligment(aligment) { sizeof(DataUnion); }
 
 
 		DataBuffer(uint64_t size, int aligment = 4) : _size(size), _aligment(aligment) {
@@ -54,6 +54,14 @@ namespace Warp::Data {
 			}
 
 			_size = new_size;
+		}
+
+		void clear() {
+			if (_data != nullptr) {
+				mi_free_aligned(_data, _aligment);
+			}
+			_data = nullptr;
+			_size = 0;
 		}
 
 		inline bool is_vailed() const { return _data != nullptr; }
@@ -157,6 +165,11 @@ namespace Warp::Data {
 
 		void clear() {
 			_offset = 0;
+		}
+
+		void clear_with_memory() {
+			_offset = 0;
+			_buffer.clear();
 		}
 
 		void reserve(uint64_t size) {
@@ -290,11 +303,11 @@ namespace Warp::Data {
 				return false;
 			}
 
-			DataBufferVector name_text_segment{};
-			DataBufferVector desc_text_segment{};
-			DataBufferVector array_info_segment{};
+			DataBufferVector name_text_segment{64};
+			DataBufferVector desc_text_segment{64};
+			DataBufferVector array_info_segment{64};
 			MVector<DataPacketLayoutStructureMemberRecord> var_info{};
-
+			var_info.reserve(64);
 			uint16_t main_struct_element_count = 0;
 			try {
 				main_struct_element_count = visit_data_packet_desc(_target_desc.get(), 0, 0, 

@@ -24,6 +24,10 @@ struct AA {
 	uint8_t a;
 };
 
+class hello : public Inherit<hello, Object> {
+
+};
+
 extern "C" {
 
 	struct kk {
@@ -57,14 +61,28 @@ int main() {
 	mi_option_set(mi_option_show_stats, 1);
 	mi_option_set(mi_option_show_errors, 1);
 
+	auto ob = std::make_unique<hello>();
+
+	DD temp{.d = 55};
+
+	ob->set_value("hello", 15);
+	ob->set_value("hello", "hello world");
+	ob->set_value("hello", "hello worlasdasdasdsadasdad");
+	ob->set_value("hello", "hello cccc");
+
+	ob->set_value_data<DD>("aa", temp);
+	DD dd2{};
+	ob->get_value_data<DD>("aa", dd2);
+	info("{};", ob->get_value<std::string_view>("hello").value_or(""));
+	info("{};", ob->get_value<int32_t>("hellop").value_or(0));
+	info("{};", dd2.d);
+	ob->set_value("aa", "hello aaccc");
+	//info("{};", ob->get_value<std::string_view>("aa").value());
+	return 0;
 	{
 		std::println(std::cout, "{}", sizeof(kk));
 		std::println(std::cout, "{}", sizeof(BB));
 		std::println(std::cout, "{}", sizeof(DD));
-
-		//std::unique_ptr<DataPacketDataStructureElementDescriptor> desc1{ new DataPacketDataStructureElementDescriptor (DataPacketMemberType::I8)};
-		//std::unique_ptr < DataPacketDataStructureElementDescriptor> desc2{ new DataPacketDataStructureElementDescriptor(DataPacketMemberType::I32) };
-		//std::unique_ptr < DataPacketDataStructureElementDescriptor> desc3{ new DataPacketDataStructureElementDescriptor(DataPacketMemberType::I32) };
 
 		const auto desc1 = std::make_unique<DataPacketDataStructureDescriptor>("kk", "", 64);
 		desc1->add_normal_member(DataPacketMemberType::I8, "a").compile();

@@ -23,12 +23,7 @@ int Warp::Object::compare(const Object& other) const noexcept
 	return 0;
 }
 
-Warp::Auxiliary* Warp::Object::get_or_create_auxiliary() noexcept
-{
+Warp::Auxiliary* Warp::Object::get_or_create_auxiliary() noexcept {
 	if(!_auxiliary) _auxiliary = std::make_unique<Auxiliary>();
 	return _auxiliary.get();
-}
-
-void Warp::Object::accept(Visitor* modif) {
-	modif->apply(this);
 }

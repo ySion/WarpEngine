@@ -138,7 +138,7 @@ namespace Warp {
 
 		mutable tbb::spin_rw_mutex _mutex {};
 	
-		mmap<void*, uint64_t> _allocations_map {};
+		MMap<void*, uint64_t> _allocations_map {};
 
 	public:
 		Allocator() {

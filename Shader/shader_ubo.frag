@@ -27,13 +27,12 @@ layout(set = 2, binding = 0) buffer MaterialParameters {
 	float brightness_multi;
 	float roughness_multi;
 	float metallic_multi;
+	uint sampler_index[16];
 } material_parameters[];
 
 layout(set = 3, binding = 0) buffer ObjectParameters {
-	uint sampler_index[16];
 	mat4 M;
 } object_parameters[];
-
 
 
 void main(){
