@@ -1,0 +1,16 @@
+#pragma once
+
+#include "Graphics/GPUResource/GPUResourceBase.h"
+#include "GPUResource/GPUFence.h"
+#include "GPUResource/GPUSemaphore.h"
+#include "GPUResource/GPUBuffer.h"
+#include "GPUResource/GPUImage.h"
+#include "GPUResource/GPUShader.h"
+#include "GPUResource/GPUSwapChain.h"
+#include "GPUResource/GPUCommandPool.h"
+#include "GPUResource/GPUDescriptorPool.h"
+#include "GPUResource/GPUPipelineLayout.h"
+#include "GPUResource/GPURenderPass.h"
+#include "GPUResource/GPUGraphicsPipeline.h"
+#include "GPUResource/GPUFrameBuffer.h"
+#include "Graphics/GPUResourceHandle.h"

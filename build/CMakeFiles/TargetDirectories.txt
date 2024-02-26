@@ -1,0 +1,13 @@
+E:/WarpEngine/build/CMakeFiles/edit_cache.dir
+E:/WarpEngine/build/CMakeFiles/rebuild_cache.dir
+E:/WarpEngine/build/Ext/volk/CMakeFiles/volk.dir
+E:/WarpEngine/build/Ext/volk/CMakeFiles/edit_cache.dir
+E:/WarpEngine/build/Ext/volk/CMakeFiles/rebuild_cache.dir
+E:/WarpEngine/build/Ext/SDL/CMakeFiles/SDL3-shared.dir
+E:/WarpEngine/build/Ext/SDL/CMakeFiles/SDL3_test.dir
+E:/WarpEngine/build/Ext/SDL/CMakeFiles/uninstall.dir
+E:/WarpEngine/build/Ext/SDL/CMakeFiles/edit_cache.dir
+E:/WarpEngine/build/Ext/SDL/CMakeFiles/rebuild_cache.dir
+E:/WarpEngine/build/Source/CMakeFiles/WarpEngine.dir
+E:/WarpEngine/build/Source/CMakeFiles/edit_cache.dir
+E:/WarpEngine/build/Source/CMakeFiles/rebuild_cache.dir

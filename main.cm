@@ -1,0 +1,20 @@
+
+
+concept(T) Number {
+vars:
+	is_number(T)
+fn:
+	fn player()
+}
+
+struct p(T : Number(T))  {
+	a : T;
+	a : p;
+}
+
+
+
+
+fn play(){
+	print("hello world");
+}
